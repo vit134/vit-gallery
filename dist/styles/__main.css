@@ -1,0 +1,23 @@
+.plugin {
+  margin-right: 12px;
+}
+.plugin-a {
+  right: 2px;
+}
+.content {
+  background-color: #fff;
+}
+.content__article {
+  font-size: 24px;
+}
+.content__article p {
+  color: red;
+  background-color: #fff;
+}
+.content__text {
+  font-size: 80px;
+  line-height: 41px;
+}
+.content:hover {
+  content: "";
+}
