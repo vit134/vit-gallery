@@ -22,7 +22,8 @@
           , $controlsBlock
           ;
 
-        var _galleryInnerClass = 'gallery__inner'
+        var _galleryInnerClass = 'gallery__inner';
+
 
         if (settings.debag) {
             console.log('gallery container', $this);
@@ -61,11 +62,7 @@
         }
 
         function setImgBlockWidth() {
-            if ($this.width() > $imgBlock.width()) {
-                $imgBlock.css('width', $this.width());
-                //console.log('container width', $this.width());
-                //console.log('img- widthblock', $imgBlock.width());
-            }
+            $imgBlock.css('width', $this.width());
         }
 
         function setGalleryHeight() {
@@ -82,8 +79,7 @@
             if (settings.controls) {
                 $controlsBlock = $this.find('.' + settings.controlsClass);
 
-                var controlsInner = '<ul></ul>'
-                  , prev = '<span class="prev"></span>'
+                var prev = '<span class="prev"></span>'
                   , next = '<span class="next"></span>'
                   , item = '<li class="gallery__controls__item"></li>'
                   ;
@@ -108,14 +104,6 @@
 
         }
 
-        /*function hideImg() {
-            $imgBlock.each(function(index){
-                if (index != 0) {
-                    $(this).hide();
-                }
-            })
-        }*/
-
         function showImg() {
             $imgBlock.each(function(index){
                 if (index != 0) {
@@ -124,6 +112,72 @@
             })
         }
 
+        function bindEvents() {
+            var $prevButton = $('.prev');
+            var $nextButton = $('.next');
+            var $controlsItem = $('.gallery__controls__item');
+            var $galleryInner = $('.gallery__inner');
+            var galleryInnerPosition = parseInt($galleryInner.css('left'));
+            var currentBlock = $galleryInner.find('.gallery__img-block.current');
+            var currentBlockIndex = currentBlock.index();
+
+
+
+            $prevButton.on('click', function(){
+
+                currentBlock = $galleryInner.find('.gallery__img-block.current');
+
+                if (!currentBlock.is(':first-child')) {
+
+                    $galleryInner.animate({
+                        left: galleryInnerPosition + $imgBlock.width()
+                    },300);
+
+                    galleryInnerPosition = galleryInnerPosition + $imgBlock.width();
+
+                    currentBlock.removeClass('current');
+                    currentBlock.prev().addClass('current');
+
+                    $('.gallery__controls__item:eq('+  currentBlockIndex +')').removeClass('current');
+
+                    currentBlockIndex--;
+
+                    $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
+
+                }
+            })
+
+            $nextButton.on('click', function(){
+
+                currentBlock = $galleryInner.find('.gallery__img-block.current');
+
+                if (!currentBlock.is(':last-child')) {
+
+
+                    $galleryInner.animate({
+                        left: galleryInnerPosition - $imgBlock.width()
+                    },300);
+
+                    galleryInnerPosition = galleryInnerPosition - $imgBlock.width();
+
+                    currentBlock.removeClass('current');
+                    currentBlock.next().addClass('current');
+
+                    $('.gallery__controls__item:eq('+  currentBlockIndex +')').removeClass('current');
+                    currentBlockIndex++;
+
+                    $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
+                }
+            })
+
+            /*$controlsItem.on('click', function() {
+                var itemIndex = $(this).index() + 1;
+
+                $galleryInner.animate({
+                    left: galleryInnerPosition $imgBlock.width()
+                },300);
+            })*/
+        }
 
         function init() {
             addClasses();
@@ -133,6 +187,11 @@
             setInnerWidth();
             showImg();
             createControls();
+
+            $imgBlock.first().addClass('current');
+            $('.gallery__controls__item').first().addClass('current');
+
+            bindEvents();
         }
 
         init();
