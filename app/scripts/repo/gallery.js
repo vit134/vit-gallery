@@ -83,27 +83,29 @@
                 $controlsBlock = $this.find('.' + settings.controlsClass);
 
                 var controlsInner = '<ul></ul>'
-                  , prev = '<li class="prev"></li>'
-                  , next = '<li class="next"></li>'
+                  , prev = '<span class="prev"></span>'
+                  , next = '<span class="next"></span>'
                   , item = '<li class="gallery__controls__item"></li>'
                   ;
 
-                console.log($imgBlock.length);
 
                 for (var i=0; $imgBlock.length > i; i++) {
                     var newItem = $controlsBlock.append(item);
 
                 }
 
-
                 $('.gallery__controls__item').each(function(index){
                     $(this).addClass('item_' + index)
                 })
 
                 $controlsBlock.append(newItem);
-                console.log($(newItem));
-                $(newItem).find('li').wrapAll('<ul></ul>');
+                var galleryUl = $(newItem).find('li').wrapAll('<ul class="gallery__controls__ul"></ul>');
+
+                $(galleryUl).parent().before(prev).after(next);
+
             }
+
+
         }
 
         /*function hideImg() {

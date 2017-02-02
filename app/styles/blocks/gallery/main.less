@@ -39,17 +39,28 @@
         bottom: 0;
         width: 100%;
         text-align: center;
+        padding: 20px 0;
 
-        & ul {
+        &__ul {
             display: inline-block;
+            margin: 0;
+            padding: 0;
+            vertical-align: middle;
         }
 
         &__item {
             display: inline-block;
-            width: 30px;
-            height: 30px;
-            background: red;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 2px solid white;
             margin: 0 15px;
+            border-radius: 50%;
+            cursor: pointer;
+
+            &.current {
+                background: red;
+            }
 
             &:hover {
                 color: #fff;
@@ -59,6 +70,25 @@
                 -o-transform: rotate(90deg);
                 -ms-transform: rotate(90deg);
             }
+        }
+
+        & .prev,
+        & .next {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+
+        & .prev {
+            background: url('@{blockPaths}/gallery/images/left_white.png') center no-repeat;
+            background-size: 100%;
+        }
+
+        & .next {
+            background: url('@{blockPaths}/gallery/images/right_white.png') center no-repeat;
+            background-size: 100%;
         }
     }
 }

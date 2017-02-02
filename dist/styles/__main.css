@@ -48,16 +48,26 @@ html {
   bottom: 0;
   width: 100%;
   text-align: center;
+  padding: 20px 0;
 }
-.gallery__controls ul {
+.gallery__controls__ul {
   display: inline-block;
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
 }
 .gallery__controls__item {
   display: inline-block;
-  width: 30px;
-  height: 30px;
-  background: red;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: 2px solid white;
   margin: 0 15px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.gallery__controls__item.current {
+  background: red;
 }
 .gallery__controls__item:hover {
   color: #fff;
@@ -66,4 +76,20 @@ html {
   -moz-transform: rotate(90deg);
   -o-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
+}
+.gallery__controls .prev,
+.gallery__controls .next {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.gallery__controls .prev {
+  background: url('../../app/styles/blocks/gallery/images/left_white.png') center no-repeat;
+  background-size: 100%;
+}
+.gallery__controls .next {
+  background: url('../../app/styles/blocks/gallery/images/right_white.png') center no-repeat;
+  background-size: 100%;
 }
