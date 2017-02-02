@@ -3,6 +3,9 @@ var gulp = require('gulp')
   , concat = require('gulp-concat')
   , rename = require('gulp-rename')
   , cleanCSS = require('gulp-clean-css')
+  , uglify = require('gulp-uglify')
+  , imagemin = require('gulp-imagemin')
+  , pngquant = require('imagemin-pngquant')
   ;
 
 //paths
@@ -15,6 +18,11 @@ gulp.paths = {
     styles: {
         src: 'app/styles',
         dst: 'dist/styles'
+    },
+
+    images: {
+        src: 'app/images',
+        dst: 'dist/images'
     }
 };
 //Styles build
@@ -37,4 +45,27 @@ gulp.task('styles', function () {
     .pipe(gulp.dest(gulp.paths.styles.dst));
 });
 
-gulp.task('build', ['styles']);
+gulp.task('scripts', function () {
+    gulp.src([
+        gulp.paths.scripts.src + '/repo/**/*.js',
+        gulp.paths.scripts.src + '/*.js'
+
+    ])
+    .pipe(uglify().on('error', function(e){
+        console.log(e);
+    }))
+    .pipe(gulp.dest(gulp.paths.scripts.dst))
+});
+
+gulp.task('images', function () {
+    gulp.src(gulp.paths.images.src)
+    .pipe(imagemin({ //Сожмем их
+        progressive: true,
+        svgoPlugins: [{removeViewBox: false}],
+        use: [pngquant()],
+        interlaced: true
+    }))
+    .pipe(gulp.dest(gulp.paths.images.dst));
+});
+
+gulp.task('build', ['styles', 'scripts']);

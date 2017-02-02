@@ -4,20 +4,66 @@
 .plugin-a {
   right: 2px;
 }
-.content {
-  background-color: #fff;
+body,
+html {
+  margin: 0;
 }
-.content__article {
-  font-size: 24px;
+.wrapper {
+  min-width: 1000px;
+  max-width: 70%;
+  margin: 0 auto;
 }
-.content__article p {
-  color: red;
-  background-color: #fff;
+.gallery {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
 }
-.content__text {
-  font-size: 80px;
-  line-height: 41px;
+.gallery__inner {
+  font-size: 0;
+  position: absolute;
+  left: 0;
 }
-.content:hover {
-  content: "";
+.gallery__img-block {
+  display: none;
+  position: relative;
+  text-align: center;
+}
+.gallery__img-block__description {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  font-size: 45px;
+  font-weight: bold;
+}
+.gallery__img-block__img {
+  max-width: 100%;
+}
+.gallery__img-block:first-child {
+  display: inline-block;
+}
+.gallery__controls {
+  z-index: 2;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+}
+.gallery__controls ul {
+  display: inline-block;
+}
+.gallery__controls__item {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background: red;
+  margin: 0 15px;
+}
+.gallery__controls__item:hover {
+  color: #fff;
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
 }
