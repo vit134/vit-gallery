@@ -1,0 +1,64 @@
+.gallery {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+
+    &__inner {
+        font-size: 0;
+        position: absolute;
+        left: 0;
+    }
+
+    &__img-block {
+        display: none;
+        position: relative;
+        text-align: center;
+        //padding-right: 15px;
+
+        &__description {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            font-size: 45px;
+            font-weight: bold;
+        }
+
+        &__img {
+            max-width: 100%;
+        }
+    }
+
+    &__img-block:first-child {
+        display: inline-block;
+    }
+
+    &__controls{
+        z-index: 2;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+
+        & ul {
+            display: inline-block;
+        }
+
+        &__item {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: red;
+            margin: 0 15px;
+
+            &:hover {
+                color: #fff;
+                transform: rotate(90deg) ;
+                -webkit-transform: rotate(90deg);
+                -moz-transform: rotate(90deg);
+                -o-transform: rotate(90deg);
+                -ms-transform: rotate(90deg);
+            }
+        }
+    }
+}

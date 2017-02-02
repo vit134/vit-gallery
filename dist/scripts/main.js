@@ -1,0 +1,1 @@
+$(document).ready(function(){var a=$(".gallery");a.vitGallery({debag:!0})});
