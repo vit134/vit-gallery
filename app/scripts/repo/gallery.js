@@ -13,20 +13,32 @@
             imgBlockClass: 'gallery__img-block',
             controls: true,
             controlsClass: 'gallery__controls',
-            imgPadding: 15
+            animateSpeed: 1000,
+            imgPadding: 15,
+            autoplay: false,
+            autoplayDelay: 500,
 
         }, options);
 
         var $this = $(this)
           , $imgBlock = $this.find('.'+ settings.imgBlockClass)
           , $controlsBlock
+          , $prevButton
+          , $nextButton
+          , $controlsItem
+          , $galleryInner
+          , $currentBlock
           ;
 
         var _galleryInnerClass = 'gallery__inner';
 
-
-        if (settings.debag) {
-            console.log('gallery container', $this);
+        function updatevariables() {
+            $controlsBlock = $this.find('.' + settings.controlsClass);
+            $prevButton = $('.prev');
+            $nextButton = $('.next');
+            $controlsItem = $('.gallery__controls__item');
+            $galleryInner = $('.gallery__inner');
+            $currentBlock = $galleryInner.find('.gallery__img-block.current');
         }
 
         function addClasses () {
@@ -112,62 +124,68 @@
             })
         }
 
+        function nextSlide() {
+            if (!$currentBlock.is(':first-child')) {
+
+                $galleryInner.animate({
+                    left: galleryInnerPosition + $imgBlock.width()
+                }, settings.animateSpeed);
+
+                galleryInnerPosition = galleryInnerPosition + $imgBlock.width();
+
+                $currentBlock.removeClass('current');
+                $currentBlock.prev().addClass('current');
+
+                $('.gallery__controls__item:eq('+  currentBlockIndex +')').removeClass('current');
+
+                currentBlockIndex--;
+
+                $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
+
+            }
+        }
+
+        function prevSlide() {
+            if (!$currentBlock.is(':last-child')) {
+
+                $galleryInner.animate({
+                    left: galleryInnerPosition - $imgBlock.width()
+                }, settings.animateSpeed);
+
+                galleryInnerPosition = galleryInnerPosition - $imgBlock.width();
+
+                currentBlock.removeClass('current');
+                currentBlock.next().addClass('current');
+
+                $('.gallery__controls__item:eq('+  currentBlockIndex +')').removeClass('current');
+                currentBlockIndex++;
+
+                $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
+            }
+        }
+
         function bindEvents() {
-            var $prevButton = $('.prev');
-            var $nextButton = $('.next');
-            var $controlsItem = $('.gallery__controls__item');
-            var $galleryInner = $('.gallery__inner');
-            var galleryInnerPosition = parseInt($galleryInner.css('left'));
-            var currentBlock = $galleryInner.find('.gallery__img-block.current');
-            var currentBlockIndex = currentBlock.index();
-
-
+            //var $prevButton = $('.prev')
+              //, $nextButton = $('.next')
+              //, $controlsItem = $('.gallery__controls__item')
+              //, $galleryInner = $('.gallery__inner')
+            var galleryInnerPosition = parseInt($galleryInner.css('left'))
+              //, currentBlock = $galleryInner.find('.gallery__img-block.current')
+              , currentBlockIndex = $currentBlock.index()
+              ;
 
             $prevButton.on('click', function(){
 
-                currentBlock = $galleryInner.find('.gallery__img-block.current');
+                $currentBlock = $galleryInner.find('.gallery__img-block.current');
 
-                if (!currentBlock.is(':first-child')) {
-
-                    $galleryInner.animate({
-                        left: galleryInnerPosition + $imgBlock.width()
-                    },300);
-
-                    galleryInnerPosition = galleryInnerPosition + $imgBlock.width();
-
-                    currentBlock.removeClass('current');
-                    currentBlock.prev().addClass('current');
-
-                    $('.gallery__controls__item:eq('+  currentBlockIndex +')').removeClass('current');
-
-                    currentBlockIndex--;
-
-                    $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
-
-                }
+                nextSlide();
             })
 
             $nextButton.on('click', function(){
 
-                currentBlock = $galleryInner.find('.gallery__img-block.current');
+                $currentBlock = $galleryInner.find('.gallery__img-block.current');
 
-                if (!currentBlock.is(':last-child')) {
-
-
-                    $galleryInner.animate({
-                        left: galleryInnerPosition - $imgBlock.width()
-                    },300);
-
-                    galleryInnerPosition = galleryInnerPosition - $imgBlock.width();
-
-                    currentBlock.removeClass('current');
-                    currentBlock.next().addClass('current');
-
-                    $('.gallery__controls__item:eq('+  currentBlockIndex +')').removeClass('current');
-                    currentBlockIndex++;
-
-                    $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
-                }
+                prevSlide();
             })
 
             /*$controlsItem.on('click', function() {
@@ -187,6 +205,8 @@
             setInnerWidth();
             showImg();
             createControls();
+
+            updatevariables();
 
             $imgBlock.first().addClass('current');
             $('.gallery__controls__item').first().addClass('current');
