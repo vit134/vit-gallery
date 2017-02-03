@@ -92,13 +92,35 @@
         }
 
         function setGalleryHeight() {
+
             var heightArr = [];
+
             $imgBlock.each(function(){
                 var imhHeight = $(this).find('.gallery__img-block__img').height();
                 heightArr.push(imhHeight);
             })
 
-            $this.css('height', Math.max.apply(null, heightArr));
+            var galleryHeight = $this.css('height', Math.max.apply(null, heightArr));
+
+            $imgBlock.each(function(){
+                var img = $(this).find('.gallery__img-block__img');
+                var imhHeight = img.height();
+
+                console.log(img)
+                console.log(imhHeight)
+                var styles = {
+                    position: 'absolute',
+                    top: '50%',
+                    marginTop: -(imhHeight / 2)
+                }
+
+                if (imhHeight < galleryHeight) {
+
+                    img.css(styles)
+                }
+            })
+
+
         }
 
         function createControls() {
@@ -138,7 +160,7 @@
             })
         }
 
-        function nextSlide() {
+        function nextSlide(callback) {
             //console.log(galleryInnerPosition)
             if (!$currentBlock.is(':last-child')) {
                 //console.log(currentBlockIndex);
@@ -158,11 +180,15 @@
                 $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
 
                 updateSlideVariables();
+
+                if (callback) {
+                    callback();
+                }
             }
 
         }
 
-        function prevSlide() {
+        function prevSlide(callback) {
             //console.log(galleryInnerPosition)
             if (!$currentBlock.is(':first-child')) {
 
@@ -170,7 +196,6 @@
                     left: galleryInnerPosition + $imgBlock.width()
                 }, settings.animateSpeed);
 
-                console.log(galleryInnerPosition);
 
                 galleryInnerPosition = galleryInnerPosition + $imgBlock.width();
 
@@ -184,6 +209,10 @@
                 $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
 
                 updateSlideVariables();
+
+                if (callback) {
+                    callback();
+                }
             }
 
         }
@@ -191,15 +220,7 @@
         function goToSlide(clickItem) {
             var thisIndex = clickItem.index();
 
-            console.log('на что нажали ', thisIndex);
-            console.log('какой был ',currentBlockIndex);
-            console.log($currentBlock)
-            console.log(galleryInnerPosition)
-            console.log()
-
-            //console.log(galleryInnerPosition)
             if (currentBlockIndex < thisIndex) {
-                //console.log('> ')
                 $galleryInner.animate({
                     left: galleryInnerPosition - ( $imgBlock.width() * ( thisIndex -  currentBlockIndex))
                 }, settings.animateSpeed);
@@ -207,8 +228,7 @@
                 galleryInnerPosition = galleryInnerPosition - ( $imgBlock.width() * ( thisIndex -  currentBlockIndex))
 
             } else {
-                //console.log('< ')
-                console.log('(' + $imgBlock.width() + '*' + '(' + thisIndex  + '+' +  currentBlockIndex + ') ) + ' +  galleryInnerPosition )
+                //console.log('(' + $imgBlock.width() + '*' + '(' + thisIndex  + '+' +  currentBlockIndex + ') ) + ' +  galleryInnerPosition )
                 $galleryInner.animate({
                     left:  - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
                 }, settings.animateSpeed);
@@ -254,7 +274,7 @@
         function getCurrentSlide() {
             var index = 0;
 
-            if ($galleryInner.find('.current') > 0) {
+            if ($galleryInner.find('.current').length > 0) {
                 index = $galleryInner.find('.current').index();
                 $controlsItem.eq(index).addClass('current');
                 $galleryInner.css('left', - (index * $imgBlock.width()));
@@ -262,7 +282,8 @@
                 $imgBlock.first().addClass('current');
                 $controlsItem.first().addClass('current');
             }
-            updatevariables();
+
+            updateSlideVariables();
 
         }
 
