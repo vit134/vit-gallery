@@ -7,6 +7,8 @@
 
     $.fn.vitGallery = function( options) {
 
+
+        //Default settings
         var settings = $.extend({
             debag: false,
             buttons: true,
@@ -20,16 +22,22 @@
 
         }, options);
 
-        var $this = $(this)
-          , $imgBlock = $this.find('.'+ settings.imgBlockClass)
-          , $controlsBlock
-          , $prevButton
-          , $nextButton
-          , $controlsItem
-          , $galleryInner
-          , $currentBlock
+
+        //Default variables
+        var $this = $(this) // .gallery
+          , $imgBlock = $this.find('.'+ settings.imgBlockClass) // .gallery__img-block
+          , $controlsBlock = $this.find('.'+ settings.controlsClass) // .gallery__controls
+          , $prevButton // .gallery .prev
+          , $nextButton // .gallery .next
+          , $controlsItem // .gallery__controls__item
+          , $galleryInner // .gallery__inner
+          , galleryInnerPosition // css left of gallery inner
+          , $currentBlock // .gallery__img-block.current
+          , currentBlockIndex // index of current block
           ;
 
+
+        //Classess
         var _galleryInnerClass = 'gallery__inner';
 
         function updatevariables() {
@@ -38,11 +46,16 @@
             $nextButton = $('.next');
             $controlsItem = $('.gallery__controls__item');
             $galleryInner = $('.gallery__inner');
+            $currentBlock = $galleryInner.find($imgBlock);
+            currentBlockIndex = $currentBlock.index();
+        }
+
+        function updateSlideVariables() {
             $currentBlock = $galleryInner.find('.gallery__img-block.current');
+            currentBlockIndex = $currentBlock.index();
         }
 
         function addClasses () {
-
             $imgBlock.each(function(){
                 $(this).find('span').addClass('gallery__img-block__description');
                 $(this).find('img').addClass('gallery__img-block__img')
@@ -125,11 +138,38 @@
         }
 
         function nextSlide() {
+
+            if (!$currentBlock.is(':last-child')) {
+                //console.log(currentBlockIndex);
+
+                $galleryInner.animate({
+                    left: galleryInnerPosition - $imgBlock.width()
+                }, settings.animateSpeed);
+
+                galleryInnerPosition = galleryInnerPosition - $imgBlock.width();
+
+                $currentBlock.removeClass('current');
+                $currentBlock.next().addClass('current');
+
+                $('.gallery__controls__item:eq('+  currentBlockIndex +')').removeClass('current');
+                currentBlockIndex++;
+
+                $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
+
+                updateSlideVariables();
+            }
+
+        }
+
+        function prevSlide() {
+
             if (!$currentBlock.is(':first-child')) {
 
                 $galleryInner.animate({
                     left: galleryInnerPosition + $imgBlock.width()
                 }, settings.animateSpeed);
+
+                console.log(galleryInnerPosition);
 
                 galleryInnerPosition = galleryInnerPosition + $imgBlock.width();
 
@@ -142,59 +182,76 @@
 
                 $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
 
+                updateSlideVariables();
             }
+
         }
 
-        function prevSlide() {
-            if (!$currentBlock.is(':last-child')) {
+        function goToSlide(clickItem) {
+            var thisIndex = clickItem.index();
+            console.log('clickItem index', thisIndex);
 
+            if (currentBlockIndex < thisIndex) {
                 $galleryInner.animate({
-                    left: galleryInnerPosition - $imgBlock.width()
+                    left: galleryInnerPosition - ( $imgBlock.width() * thisIndex )
                 }, settings.animateSpeed);
 
-                galleryInnerPosition = galleryInnerPosition - $imgBlock.width();
 
-                currentBlock.removeClass('current');
-                currentBlock.next().addClass('current');
+            } else {
+                $galleryInner.animate({
+                    left: galleryInnerPosition + ( $imgBlock.width() * thisIndex )
+                }, settings.animateSpeed);
 
-                $('.gallery__controls__item:eq('+  currentBlockIndex +')').removeClass('current');
-                currentBlockIndex++;
-
-                $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
             }
+
+            $galleryInner.find('.current').removeClass('current');
+            $currentBlock.eq(thisIndex).addClass('current');
+
+            $controlsBlock.find('.current').removeClass('current');
+            $controlsItem.eq(thisIndex).addClass('current');
+
+            updateSlideVariables();
+
         }
 
         function bindEvents() {
-            //var $prevButton = $('.prev')
-              //, $nextButton = $('.next')
-              //, $controlsItem = $('.gallery__controls__item')
-              //, $galleryInner = $('.gallery__inner')
-            var galleryInnerPosition = parseInt($galleryInner.css('left'))
-              //, currentBlock = $galleryInner.find('.gallery__img-block.current')
-              , currentBlockIndex = $currentBlock.index()
-              ;
+            galleryInnerPosition = parseInt($galleryInner.css('left'));
+            currentBlockIndex = $currentBlock.index();
+
 
             $prevButton.on('click', function(){
-
-                $currentBlock = $galleryInner.find('.gallery__img-block.current');
-
-                nextSlide();
-            })
-
-            $nextButton.on('click', function(){
 
                 $currentBlock = $galleryInner.find('.gallery__img-block.current');
 
                 prevSlide();
             })
 
-            /*$controlsItem.on('click', function() {
-                var itemIndex = $(this).index() + 1;
+            $nextButton.on('click', function(){
 
-                $galleryInner.animate({
-                    left: galleryInnerPosition $imgBlock.width()
-                },300);
-            })*/
+                $currentBlock = $galleryInner.find('.gallery__img-block.current');
+                nextSlide();
+            })
+
+            $controlsItem.on('click', function() {
+
+                goToSlide($(this));
+
+            })
+        }
+
+        function getCurrentSlide() {
+            var index = 0;
+
+            if ($galleryInner.find('.current') > 0) {
+                index = $galleryInner.find('.current').index();
+                $controlsItem.eq(index).addClass('current');
+                $galleryInner.css('left', - (index * $imgBlock.width()));
+            } else {
+                $imgBlock.first().addClass('current');
+                $controlsItem.first().addClass('current');
+            }
+            updatevariables();
+
         }
 
         function init() {
@@ -208,8 +265,7 @@
 
             updatevariables();
 
-            $imgBlock.first().addClass('current');
-            $('.gallery__controls__item').first().addClass('current');
+            getCurrentSlide();
 
             bindEvents();
         }
