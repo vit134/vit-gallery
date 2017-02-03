@@ -104,18 +104,18 @@
 
             $imgBlock.each(function(){
                 var img = $(this).find('.gallery__img-block__img');
-                var imhHeight = img.height();
+                var imgHeight = img.height();
+                var imgWidth = img.width();
 
-                console.log(img)
-                console.log(imhHeight)
                 var styles = {
                     position: 'absolute',
                     top: '50%',
-                    marginTop: -(imhHeight / 2)
+                    marginTop: -(imgHeight / 2),
+                    left: '50%',
+                    marginLeft: - (imgWidth / 2)
                 }
 
-                if (imhHeight < galleryHeight) {
-
+                if (imgHeight < galleryHeight.height()) {
                     img.css(styles)
                 }
             })
@@ -290,10 +290,11 @@
         function init() {
             addClasses();
             addWrapper();
+            showImg();
             setGalleryHeight();
             setImgBlockWidth();
             setInnerWidth();
-            showImg();
+            
             createControls();
 
             updatevariables();
