@@ -46,13 +46,14 @@
             $nextButton = $('.next');
             $controlsItem = $('.gallery__controls__item');
             $galleryInner = $('.gallery__inner');
-            $currentBlock = $galleryInner.find($imgBlock);
+            $currentBlock = $galleryInner.find('.gallery__img-block.current');
             currentBlockIndex = $currentBlock.index();
         }
 
         function updateSlideVariables() {
             $currentBlock = $galleryInner.find('.gallery__img-block.current');
             currentBlockIndex = $currentBlock.index();
+            //console.log(galleryInnerPosition)
         }
 
         function addClasses () {
@@ -138,7 +139,7 @@
         }
 
         function nextSlide() {
-
+            //console.log(galleryInnerPosition)
             if (!$currentBlock.is(':last-child')) {
                 //console.log(currentBlockIndex);
 
@@ -162,7 +163,7 @@
         }
 
         function prevSlide() {
-
+            //console.log(galleryInnerPosition)
             if (!$currentBlock.is(':first-child')) {
 
                 $galleryInner.animate({
@@ -189,23 +190,34 @@
 
         function goToSlide(clickItem) {
             var thisIndex = clickItem.index();
-            console.log('clickItem index', thisIndex);
 
+            console.log('на что нажали ', thisIndex);
+            console.log('какой был ',currentBlockIndex);
+            console.log($currentBlock)
+            console.log(galleryInnerPosition)
+            console.log()
+
+            //console.log(galleryInnerPosition)
             if (currentBlockIndex < thisIndex) {
+                //console.log('> ')
                 $galleryInner.animate({
-                    left: galleryInnerPosition - ( $imgBlock.width() * thisIndex )
+                    left: galleryInnerPosition - ( $imgBlock.width() * ( thisIndex -  currentBlockIndex))
                 }, settings.animateSpeed);
 
+                galleryInnerPosition = galleryInnerPosition - ( $imgBlock.width() * ( thisIndex -  currentBlockIndex))
 
             } else {
+                //console.log('< ')
+                console.log('(' + $imgBlock.width() + '*' + '(' + thisIndex  + '+' +  currentBlockIndex + ') ) + ' +  galleryInnerPosition )
                 $galleryInner.animate({
-                    left: galleryInnerPosition + ( $imgBlock.width() * thisIndex )
+                    left:  - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
                 }, settings.animateSpeed);
 
+                galleryInnerPosition = - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
             }
 
             $galleryInner.find('.current').removeClass('current');
-            $currentBlock.eq(thisIndex).addClass('current');
+            $imgBlock.eq(thisIndex).addClass('current');
 
             $controlsBlock.find('.current').removeClass('current');
             $controlsItem.eq(thisIndex).addClass('current');
