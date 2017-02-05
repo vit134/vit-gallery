@@ -1,7 +1,7 @@
 /* eslint no-console: 0 */
 /* eslint eqeqeq: 0 */
 
-
+/* v2.0 */
 
 (function($){
 
