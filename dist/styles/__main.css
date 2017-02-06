@@ -17,6 +17,7 @@ html {
   width: 100%;
   overflow: hidden;
   position: relative;
+  background-color: #eee;
 }
 .gallery__inner {
   font-size: 0;
@@ -36,6 +37,7 @@ html {
   width: 100%;
   font-size: 45px;
   font-weight: bold;
+  color: #fff;
 }
 .gallery__img-block__img {
   max-width: 100%;

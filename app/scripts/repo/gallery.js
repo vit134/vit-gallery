@@ -1,36 +1,65 @@
 /* eslint no-console: 0 */
 /* eslint eqeqeq: 0 */
 
-/* v2.0 */
+
+/* v2.1/w */
+
 
 (function($){
 
     $.fn.vitGallery = function( options) {
 
+
+        //Default settings
         var settings = $.extend({
             debag: false,
             buttons: true,
+            galleryHeight: 'auto',
             imgBlockClass: 'gallery__img-block',
             controls: true,
             controlsClass: 'gallery__controls',
-            imgPadding: 15
+            animateSpeed: 1000,
+            imgPadding: 15,
+            autoplay: false,
+            autoplayDelay: 500,
 
         }, options);
 
-        var $this = $(this)
-          , $imgBlock = $this.find('.'+ settings.imgBlockClass)
-          , $controlsBlock
+
+        //Default variables
+        var $this = $(this) // .gallery
+          , $imgBlock = $this.find('.'+ settings.imgBlockClass) // .gallery__img-block
+          , $controlsBlock = $this.find('.'+ settings.controlsClass) // .gallery__controls
+          , $prevButton // .gallery .prev
+          , $nextButton // .gallery .next
+          , $controlsItem // .gallery__controls__item
+          , $galleryInner // .gallery__inner
+          , galleryInnerPosition // css left of gallery inner
+          , $currentBlock // .gallery__img-block.current
+          , currentBlockIndex // index of current block
           ;
 
+
+        //Classess
         var _galleryInnerClass = 'gallery__inner';
 
+        function updatevariables() {
+            $controlsBlock = $this.find('.' + settings.controlsClass);
+            $prevButton = $('.prev');
+            $nextButton = $('.next');
+            $controlsItem = $('.gallery__controls__item');
+            $galleryInner = $('.gallery__inner');
+            $currentBlock = $galleryInner.find('.gallery__img-block.current');
+            currentBlockIndex = $currentBlock.index();
+        }
 
-        if (settings.debag) {
-            console.log('gallery container', $this);
+        function updateSlideVariables() {
+            $currentBlock = $galleryInner.find('.gallery__img-block.current');
+            currentBlockIndex = $currentBlock.index();
+            //console.log(galleryInnerPosition)
         }
 
         function addClasses () {
-
             $imgBlock.each(function(){
                 $(this).find('span').addClass('gallery__img-block__description');
                 $(this).find('img').addClass('gallery__img-block__img')
@@ -66,13 +95,57 @@
         }
 
         function setGalleryHeight() {
+
             var heightArr = [];
+
             $imgBlock.each(function(){
                 var imhHeight = $(this).find('.gallery__img-block__img').height();
                 heightArr.push(imhHeight);
             })
 
-            $this.css('height', Math.max.apply(null, heightArr));
+
+            if (!settings.galleryHeight || settings.galleryHeight == 'auto') {
+                var galleryHeight = $this.css('height', Math.max.apply(null, heightArr));
+            } else {
+                var galleryHeight = $this.css('height', settings.galleryHeight);
+            }
+
+            $imgBlock.each(function(){
+                var img = $(this).find('.gallery__img-block__img');
+                img.css('opacity', 0);
+                $(this).addClass('load');
+
+
+                img.bindImageLoad(function () {
+
+                    var img = $(this);
+                    setTimeout(function () {
+                        var imgWidth = img.width()
+                          , imgHeight = img.height()
+                          ;
+                        // передаем картинку и её размеры на обработку
+                        var styles = {
+                            position: 'absolute',
+                            top: '50%',
+                            marginTop: -(imgHeight / 2),
+                            left: '50%',
+                            marginLeft: - (imgWidth / 2)
+                        }
+
+                        img.css('opacity', 1);
+                        img.parent().removeClass('load');
+
+                        if (imgHeight < galleryHeight.height()) {
+                            img.css(styles)
+                        }
+                        // обнуляем переменную, чтобы GC сделал свою работу
+                        img = null;
+                    }, 100);
+
+                });
+            })
+
+
         }
 
         function createControls() {
@@ -112,84 +185,146 @@
             })
         }
 
-        function bindEvents() {
-            var $prevButton = $('.prev');
-            var $nextButton = $('.next');
-            var $controlsItem = $('.gallery__controls__item');
-            var $galleryInner = $('.gallery__inner');
-            var galleryInnerPosition = parseInt($galleryInner.css('left'));
-            var currentBlock = $galleryInner.find('.gallery__img-block.current');
-            var currentBlockIndex = currentBlock.index();
+        function nextSlide(callback) {
+            //console.log(galleryInnerPosition)
+            if (!$currentBlock.is(':last-child')) {
+                //console.log(currentBlockIndex);
 
+                $galleryInner.animate({
+                    left: galleryInnerPosition - $imgBlock.width()
+                }, settings.animateSpeed);
+
+                galleryInnerPosition = galleryInnerPosition - $imgBlock.width();
+
+                $currentBlock.removeClass('current');
+                $currentBlock.next().addClass('current');
+
+                $('.gallery__controls__item:eq('+  currentBlockIndex +')').removeClass('current');
+                currentBlockIndex++;
+
+                $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
+
+                updateSlideVariables();
+
+                if (callback) {
+                    callback();
+                }
+            }
+
+        }
+
+        function prevSlide(callback) {
+            //console.log(galleryInnerPosition)
+            if (!$currentBlock.is(':first-child')) {
+
+                $galleryInner.animate({
+                    left: galleryInnerPosition + $imgBlock.width()
+                }, settings.animateSpeed);
+
+
+                galleryInnerPosition = galleryInnerPosition + $imgBlock.width();
+
+                $currentBlock.removeClass('current');
+                $currentBlock.prev().addClass('current');
+
+                $('.gallery__controls__item:eq('+  currentBlockIndex +')').removeClass('current');
+
+                currentBlockIndex--;
+
+                $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
+
+                updateSlideVariables();
+
+                if (callback) {
+                    callback();
+                }
+            }
+
+        }
+
+        function goToSlide(clickItem) {
+            var thisIndex = clickItem.index();
+
+            if (currentBlockIndex < thisIndex) {
+                $galleryInner.animate({
+                    left: galleryInnerPosition - ( $imgBlock.width() * ( thisIndex -  currentBlockIndex))
+                }, settings.animateSpeed);
+
+                galleryInnerPosition = galleryInnerPosition - ( $imgBlock.width() * ( thisIndex -  currentBlockIndex))
+
+            } else {
+                //console.log('(' + $imgBlock.width() + '*' + '(' + thisIndex  + '+' +  currentBlockIndex + ') ) + ' +  galleryInnerPosition )
+                $galleryInner.animate({
+                    left: - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
+                }, settings.animateSpeed);
+
+                galleryInnerPosition = - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
+            }
+
+            $galleryInner.find('.current').removeClass('current');
+            $imgBlock.eq(thisIndex).addClass('current');
+
+            $controlsBlock.find('.current').removeClass('current');
+            $controlsItem.eq(thisIndex).addClass('current');
+
+            updateSlideVariables();
+
+        }
+
+        function bindEvents() {
+            galleryInnerPosition = parseInt($galleryInner.css('left'));
+            currentBlockIndex = $currentBlock.index();
 
 
             $prevButton.on('click', function(){
 
-                currentBlock = $galleryInner.find('.gallery__img-block.current');
+                $currentBlock = $galleryInner.find('.gallery__img-block.current');
 
-                if (!currentBlock.is(':first-child')) {
-
-                    $galleryInner.animate({
-                        left: galleryInnerPosition + $imgBlock.width()
-                    },300);
-
-                    galleryInnerPosition = galleryInnerPosition + $imgBlock.width();
-
-                    currentBlock.removeClass('current');
-                    currentBlock.prev().addClass('current');
-
-                    $('.gallery__controls__item:eq('+  currentBlockIndex +')').removeClass('current');
-
-                    currentBlockIndex--;
-
-                    $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
-
-                }
+                prevSlide();
             })
 
             $nextButton.on('click', function(){
 
-                currentBlock = $galleryInner.find('.gallery__img-block.current');
-
-                if (!currentBlock.is(':last-child')) {
-
-
-                    $galleryInner.animate({
-                        left: galleryInnerPosition - $imgBlock.width()
-                    },300);
-
-                    galleryInnerPosition = galleryInnerPosition - $imgBlock.width();
-
-                    currentBlock.removeClass('current');
-                    currentBlock.next().addClass('current');
-
-                    $('.gallery__controls__item:eq('+  currentBlockIndex +')').removeClass('current');
-                    currentBlockIndex++;
-
-                    $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
-                }
+                $currentBlock = $galleryInner.find('.gallery__img-block.current');
+                nextSlide();
             })
 
-            /*$controlsItem.on('click', function() {
-                var itemIndex = $(this).index() + 1;
+            $controlsItem.on('click', function() {
 
-                $galleryInner.animate({
-                    left: galleryInnerPosition $imgBlock.width()
-                },300);
-            })*/
+                goToSlide($(this));
+
+            })
+        }
+
+        function getCurrentSlide() {
+            var index = 0;
+
+            if ($galleryInner.find('.current').length > 0) {
+                index = $galleryInner.find('.current').index();
+                $controlsItem.eq(index).addClass('current');
+                $galleryInner.css('left', - (index * $imgBlock.width()));
+            } else {
+                $imgBlock.first().addClass('current');
+                $controlsItem.first().addClass('current');
+            }
+
+            updateSlideVariables();
+
         }
 
         function init() {
             addClasses();
             addWrapper();
+            showImg();
             setGalleryHeight();
             setImgBlockWidth();
             setInnerWidth();
-            showImg();
+
             createControls();
 
-            $imgBlock.first().addClass('current');
-            $('.gallery__controls__item').first().addClass('current');
+            updatevariables();
+
+            getCurrentSlide();
 
             bindEvents();
         }
@@ -198,3 +333,34 @@
 
     }
 })(jQuery)
+
+;(function ($) {
+    $.fn.bindImageLoad = function (callback) {
+        function isImageLoaded(img) {
+            // Во время события load IE и другие браузеры правильно
+            // определяют состояние картинки через атрибут complete.
+            // Исключение составляют Gecko-based браузеры.
+            if (!img.complete) {
+                return false;
+            }
+            // Тем не менее, у них есть два очень полезных свойства: naturalWidth и naturalHeight.
+            // Они дают истинный размер изображения. Если какртинка еще не загрузилась,
+            // то они должны быть равны нулю.
+            if (typeof img.naturalWidth !== "undefined" && img.naturalWidth === 0) {
+                return false;
+            }
+            // Картинка загружена.
+            return true;
+        }
+
+        return this.each(function () {
+            var ele = $(this);
+            if (ele.is("img") && $.isFunction(callback)) {
+                ele.one("load", callback);
+                if (isImageLoaded(this)) {
+                    ele.trigger("load");
+                }
+            }
+        });
+    };
+})(jQuery);

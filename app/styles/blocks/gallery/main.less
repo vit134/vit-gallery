@@ -2,6 +2,7 @@
     width: 100%;
     overflow: hidden;
     position: relative;
+    background-color: #eee;
 
     &__inner {
         font-size: 0;
@@ -14,6 +15,8 @@
         display: none;
         position: relative;
         text-align: center;
+        height: 100%;
+        vertical-align: top;
         //padding-right: 15px;
 
         &__description {
@@ -23,10 +26,17 @@
             width: 100%;
             font-size: 45px;
             font-weight: bold;
+            color: #fff;
+            z-index: 2;
         }
 
         &__img {
             max-width: 100%;
+        }
+
+        &.load {
+            background: url('@{blockPaths}/gallery/images/sunny.gif') center no-repeat;
+            background-size: 40px;
         }
     }
 
