@@ -1,7 +1,7 @@
 /* eslint no-console: 0 */
 /* eslint eqeqeq: 0 */
 
-
+/* v2.1/w */
 
 (function($){
 
@@ -12,6 +12,7 @@
         var settings = $.extend({
             debag: false,
             buttons: true,
+            galleryHeight: 'auto',
             imgBlockClass: 'gallery__img-block',
             controls: true,
             controlsClass: 'gallery__controls',
@@ -100,24 +101,46 @@
                 heightArr.push(imhHeight);
             })
 
-            var galleryHeight = $this.css('height', Math.max.apply(null, heightArr));
+
+            if (!settings.galleryHeight || settings.galleryHeight == 'auto') {
+                var galleryHeight = $this.css('height', Math.max.apply(null, heightArr));
+            } else {
+                var galleryHeight = $this.css('height', settings.galleryHeight);
+            }
 
             $imgBlock.each(function(){
                 var img = $(this).find('.gallery__img-block__img');
-                var imgHeight = img.height();
-                var imgWidth = img.width();
+                img.css('opacity', 0);
+                $(this).addClass('load');
 
-                var styles = {
-                    position: 'absolute',
-                    top: '50%',
-                    marginTop: -(imgHeight / 2),
-                    left: '50%',
-                    marginLeft: - (imgWidth / 2)
-                }
 
-                if (imgHeight < galleryHeight.height()) {
-                    img.css(styles)
-                }
+                img.bindImageLoad(function () {
+
+                    var img = $(this);
+                    setTimeout(function () {
+                        var imgWidth = img.width()
+                          , imgHeight = img.height()
+                          ;
+                        // передаем картинку и её размеры на обработку
+                        var styles = {
+                            position: 'absolute',
+                            top: '50%',
+                            marginTop: -(imgHeight / 2),
+                            left: '50%',
+                            marginLeft: - (imgWidth / 2)
+                        }
+
+                        img.css('opacity', 1);
+                        img.parent().removeClass('load');
+
+                        if (imgHeight < galleryHeight.height()) {
+                            img.css(styles)
+                        }
+                        // обнуляем переменную, чтобы GC сделал свою работу
+                        img = null;
+                    }, 100);
+
+                });
             })
 
 
@@ -230,7 +253,7 @@
             } else {
                 //console.log('(' + $imgBlock.width() + '*' + '(' + thisIndex  + '+' +  currentBlockIndex + ') ) + ' +  galleryInnerPosition )
                 $galleryInner.animate({
-                    left:  - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
+                    left: - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
                 }, settings.animateSpeed);
 
                 galleryInnerPosition = - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
@@ -294,7 +317,7 @@
             setGalleryHeight();
             setImgBlockWidth();
             setInnerWidth();
-            
+
             createControls();
 
             updatevariables();
@@ -308,3 +331,34 @@
 
     }
 })(jQuery)
+
+;(function ($) {
+    $.fn.bindImageLoad = function (callback) {
+        function isImageLoaded(img) {
+            // Во время события load IE и другие браузеры правильно
+            // определяют состояние картинки через атрибут complete.
+            // Исключение составляют Gecko-based браузеры.
+            if (!img.complete) {
+                return false;
+            }
+            // Тем не менее, у них есть два очень полезных свойства: naturalWidth и naturalHeight.
+            // Они дают истинный размер изображения. Если какртинка еще не загрузилась,
+            // то они должны быть равны нулю.
+            if (typeof img.naturalWidth !== "undefined" && img.naturalWidth === 0) {
+                return false;
+            }
+            // Картинка загружена.
+            return true;
+        }
+
+        return this.each(function () {
+            var ele = $(this);
+            if (ele.is("img") && $.isFunction(callback)) {
+                ele.one("load", callback);
+                if (isImageLoaded(this)) {
+                    ele.trigger("load");
+                }
+            }
+        });
+    };
+})(jQuery);
