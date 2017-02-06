@@ -20,8 +20,8 @@
             controlsClass: 'gallery__controls',
             animateSpeed: 1000,
             imgPadding: 15,
-            autoplay: false,
-            autoplayDelay: 500,
+            autoplay: true,
+            autoplayDelay: 3000,
 
         }, options);
 
@@ -56,6 +56,7 @@
         function updateSlideVariables() {
             $currentBlock = $galleryInner.find('.gallery__img-block.current');
             currentBlockIndex = $currentBlock.index();
+            //console.log(currentBlockIndex);
             //console.log(galleryInnerPosition)
         }
 
@@ -103,11 +104,12 @@
                 heightArr.push(imhHeight);
             })
 
+            var galleryHeight;
 
             if (!settings.galleryHeight || settings.galleryHeight == 'auto') {
-                var galleryHeight = $this.css('height', Math.max.apply(null, heightArr));
+                galleryHeight = $this.css('height', Math.max.apply(null, heightArr));
             } else {
-                var galleryHeight = $this.css('height', settings.galleryHeight);
+                galleryHeight = $this.css('height', settings.galleryHeight);
             }
 
             $imgBlock.each(function(){
@@ -210,6 +212,70 @@
                     callback();
                 }
             }
+            return currentBlockIndex;
+        }
+
+        function autoplay() {
+            var countSlides = $imgBlock.length;
+
+            console.log('до таймера', currentBlockIndex);
+            //console.log(countSlides);
+            //console.log(( current + 1 ) / countSlides  == 1  );
+
+            /*var timerId = setTimeout(function tick() {
+
+                //console.log('в таймере',currentBlockIndex);
+                //console.log(countSlides);
+                //console.log(( current + 1 ) / countSlides  == 1  );
+
+                timerId = setTimeout(tick, 2000);
+
+                nextSlide();
+                console.log('в таймере',currentBlockIndex);
+
+                if ( ( currentBlockIndex + 1 ) / countSlides  == 1  ) {
+                    console.log('the end')
+
+                    //setTimeout(goToSlide(0), 1000);
+
+                }
+
+
+            }, 2000);*/
+
+            var sliderTimer = setInterval(function() {
+
+                nextSlide();
+                console.log('в таймере',currentBlockIndex);
+
+                if ( ( currentBlockIndex + 1 ) / countSlides  == 1  ) {
+                    console.log('the end')
+                    //clearInterval(sliderTimer);
+
+                    //setTimeout(goToSlide(0), 2000);
+                }
+
+            },2000);
+
+
+            /*var timerId = setTimeout(function tick() {
+                current++
+                console.log(current);
+                console.log(countSlides);
+                console.log(( current + 1 ) / countSlides  == 1  );
+
+
+                if ( ( current + 1 ) / countSlides  == 1  ) {
+                    console.log('the end')
+
+                    setTimeout(goToSlide(0), 2000);
+
+                }
+                timerId = setTimeout(tick, 2000);
+
+                nextSlide();
+            }, 2000);*/
+
 
         }
 
@@ -242,8 +308,8 @@
 
         }
 
-        function goToSlide(clickItem) {
-            var thisIndex = clickItem.index();
+        function goToSlide(thisIndex) {
+
 
             if (currentBlockIndex < thisIndex) {
                 $galleryInner.animate({
@@ -291,7 +357,7 @@
 
             $controlsItem.on('click', function() {
 
-                goToSlide($(this));
+                goToSlide($(this).index());
 
             })
         }
@@ -312,6 +378,9 @@
 
         }
 
+
+
+
         function init() {
             addClasses();
             addWrapper();
@@ -327,6 +396,10 @@
             getCurrentSlide();
 
             bindEvents();
+
+            if (settings.autoplay ) {
+                autoplay();
+            }
         }
 
         init();
