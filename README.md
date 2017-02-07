@@ -7,28 +7,28 @@ vit-Gallery - это jQuery плагин позволяющий без особ�
 
 ## Демо
 
-vit-gallery.andryushkov.ru
+<http://vit-gallery.andryushkov.ru/>
 
 ## быстрый старт
 
 Добавьте в <head> вашего сайта :
-<code><script type="text/javascript" src="app/scripts/vendor/jquery-3.1.1.min.js"></script></code>
-<script type="text/javascript" src="app/scripts/repo/gallery.js"></script>
-<link rel="stylesheet" type="text/css" href="dist/styles/__main.css">
+`<script type="text/javascript" src="app/scripts/vendor/jquery-3.1.1.min.js"></script>`
+`<script type="text/javascript" src="app/scripts/repo/gallery.js"></script>`
+`<link rel="stylesheet" type="text/css" href="dist/styles/__main.css">`
 
 и в <body>
 
-<script>
+`<script>
 $(document).ready(function(){
     var $gallery = $('.gallery');
 
     $gallery.vitGallery()
 })
-</script>
+</script>`
 
 Разметка
 
-<div class="gallery">
+`<div class="gallery">
     <div class="gallery__img-block ">
         <span class="">Описание фото 1</span>
         <img src="http://elitefon.ru/images/201503/elitefon.ru_38824.jpg" >
@@ -41,4 +41,4 @@ $(document).ready(function(){
         <span>Описание фото 3</span>
         <img src="http://placekitten.com/360/200">
     </div>
-</div>
+</div>`
