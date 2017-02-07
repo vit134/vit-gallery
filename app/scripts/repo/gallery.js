@@ -2,7 +2,7 @@
 /* eslint eqeqeq: 0 */
 
 
-/* v2.2/w */
+/* v2.3/w resize*/
 
 
 (function($){
