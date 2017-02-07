@@ -11,12 +11,12 @@ vit-Gallery - это jQuery плагин позволяющий без особ�
 
 ## Быстрый старт
 
-`Добавьте в `<head>` вашего сайта :`
+#### Добавьте в `<head>` вашего сайта :
 ```<script type="text/javascript" src="app/scripts/vendor/jquery-3.1.1.min.js"></script>
 <script type="text/javascript" src="app/scripts/repo/gallery.js"></script>
 <link rel="stylesheet" type="text/css" href="dist/styles/__main.css">```
 
-`и в `<body>`
+#### и в `<body>`
 
 ```<script>
 $(document).ready(function(){
@@ -25,7 +25,7 @@ $(document).ready(function(){
 })
 </script>```
 
-Разметка
+#### Разметка
 
 ```<div class="gallery">
     <div class="gallery__img-block ">
