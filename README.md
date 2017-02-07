@@ -36,7 +36,7 @@ vit-Gallery - это jQuery плагин позволяющий без особ�
     </div>
 </div>
 ```
-#### 3. init gallery 
+#### 3. Init gallery 
 ```
 <script>  
     $(document).ready(function(){
