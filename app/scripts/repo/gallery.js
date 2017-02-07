@@ -43,6 +43,8 @@
         //Classess
         var _galleryInnerClass = 'gallery__inner';
 
+        var sliderTimer;
+
         function updatevariables() {
             $controlsBlock = $this.find('.' + settings.controlsClass);
             $prevButton = $('.prev');
@@ -73,21 +75,17 @@
 
         function getFullWidth() {
             var imgBlockWidth = 0;
-
             if (settings.imgPadding && settings.imgPadding != 0) {
                 imgBlockWidth = ($imgBlock.length - 1) * settings.imgPadding;
             }
-
             $imgBlock.each(function(){
                 imgBlockWidth = imgBlockWidth + $(this).outerWidth();
             })
-
             return imgBlockWidth;
         }
 
         function setInnerWidth() {
             var inner = $('.' + _galleryInnerClass);
-
             inner.css('width', getFullWidth());
         }
 
@@ -96,7 +94,6 @@
         }
 
         function setGalleryHeight() {
-
             var heightArr = [];
 
             $imgBlock.each(function(){
@@ -118,7 +115,7 @@
                 $(this).addClass('load');
 
 
-                img.bindImageLoad(function () {
+                img.bindImageLoad(function () { //Plugin for load image (look at the end of page)
 
                     var img = $(this);
                     setTimeout(function () {
@@ -159,7 +156,6 @@
                   , item = '<li class="gallery__controls__item"></li>'
                   ;
 
-
                 for (var i=0; $imgBlock.length > i; i++) {
                     var newItem = $controlsBlock.append(item);
 
@@ -173,10 +169,7 @@
                 var galleryUl = $(newItem).find('li').wrapAll('<ul class="gallery__controls__ul"></ul>');
 
                 $(galleryUl).parent().before(prev).after(next);
-
             }
-
-
         }
 
         function showImg() {
@@ -188,9 +181,7 @@
         }
 
         function nextSlide(callback) {
-            //console.log(galleryInnerPosition)
             if (!$currentBlock.is(':last-child')) {
-                //console.log(currentBlockIndex);
 
                 $galleryInner.animate({
                     left: galleryInnerPosition - $imgBlock.width()
@@ -207,6 +198,8 @@
                 $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
 
                 updateSlideVariables();
+                clearInterval(sliderTimer);
+                autoplay();
 
                 if (callback) {
                     callback();
@@ -215,72 +208,7 @@
             return currentBlockIndex;
         }
 
-        function autoplay() {
-            var countSlides = $imgBlock.length;
-
-            console.log('до таймера', currentBlockIndex);
-            //console.log(countSlides);
-            //console.log(( current + 1 ) / countSlides  == 1  );
-
-            /*var timerId = setTimeout(function tick() {
-
-                //console.log('в таймере',currentBlockIndex);
-                //console.log(countSlides);
-                //console.log(( current + 1 ) / countSlides  == 1  );
-
-                timerId = setTimeout(tick, 2000);
-
-                nextSlide();
-                console.log('в таймере',currentBlockIndex);
-
-                if ( ( currentBlockIndex + 1 ) / countSlides  == 1  ) {
-                    console.log('the end')
-
-                    //setTimeout(goToSlide(0), 1000);
-
-                }
-
-
-            }, 2000);*/
-
-            var sliderTimer = setInterval(function() {
-
-                nextSlide();
-                console.log('в таймере',currentBlockIndex);
-
-                if ( ( currentBlockIndex + 1 ) / countSlides  == 1  ) {
-                    console.log('the end')
-                    //clearInterval(sliderTimer);
-
-                    //setTimeout(goToSlide(0), 2000);
-                }
-
-            },2000);
-
-
-            /*var timerId = setTimeout(function tick() {
-                current++
-                console.log(current);
-                console.log(countSlides);
-                console.log(( current + 1 ) / countSlides  == 1  );
-
-
-                if ( ( current + 1 ) / countSlides  == 1  ) {
-                    console.log('the end')
-
-                    setTimeout(goToSlide(0), 2000);
-
-                }
-                timerId = setTimeout(tick, 2000);
-
-                nextSlide();
-            }, 2000);*/
-
-
-        }
-
         function prevSlide(callback) {
-            //console.log(galleryInnerPosition)
             if (!$currentBlock.is(':first-child')) {
 
                 $galleryInner.animate({
@@ -300,6 +228,8 @@
                 $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
 
                 updateSlideVariables();
+                clearInterval(sliderTimer);
+                autoplay();
 
                 if (callback) {
                     callback();
@@ -319,7 +249,6 @@
                 galleryInnerPosition = galleryInnerPosition - ( $imgBlock.width() * ( thisIndex -  currentBlockIndex))
 
             } else {
-                //console.log('(' + $imgBlock.width() + '*' + '(' + thisIndex  + '+' +  currentBlockIndex + ') ) + ' +  galleryInnerPosition )
                 $galleryInner.animate({
                     left: - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
                 }, settings.animateSpeed);
@@ -335,28 +264,46 @@
 
             updateSlideVariables();
 
+            clearInterval(sliderTimer);
+            autoplay();
+
+        }
+
+        function autoplay() {
+            var countSlides = $imgBlock.length;
+
+            sliderTimer = setInterval(function() {
+
+                if ( (currentBlockIndex + 1) / countSlides  == 1  ) {
+                    console.log('the end')
+                    clearInterval(sliderTimer);
+
+                    setTimeout(function() {
+                        goToSlide(0)
+                    }, settings.autoplayDelay / 2);
+                }
+
+                nextSlide();
+
+            }, settings.autoplayDelay);
+
         }
 
         function bindEvents() {
             galleryInnerPosition = parseInt($galleryInner.css('left'));
             currentBlockIndex = $currentBlock.index();
 
-
             $prevButton.on('click', function(){
-
                 $currentBlock = $galleryInner.find('.gallery__img-block.current');
-
                 prevSlide();
             })
 
             $nextButton.on('click', function(){
-
                 $currentBlock = $galleryInner.find('.gallery__img-block.current');
                 nextSlide();
             })
 
             $controlsItem.on('click', function() {
-
                 goToSlide($(this).index());
 
             })
@@ -364,7 +311,6 @@
 
         function getCurrentSlide() {
             var index = 0;
-
             if ($galleryInner.find('.current').length > 0) {
                 index = $galleryInner.find('.current').index();
                 $controlsItem.eq(index).addClass('current');
@@ -373,13 +319,8 @@
                 $imgBlock.first().addClass('current');
                 $controlsItem.first().addClass('current');
             }
-
             updateSlideVariables();
-
         }
-
-
-
 
         function init() {
             addClasses();
@@ -410,19 +351,12 @@
 ;(function ($) {
     $.fn.bindImageLoad = function (callback) {
         function isImageLoaded(img) {
-            // Во время события load IE и другие браузеры правильно
-            // определяют состояние картинки через атрибут complete.
-            // Исключение составляют Gecko-based браузеры.
             if (!img.complete) {
                 return false;
             }
-            // Тем не менее, у них есть два очень полезных свойства: naturalWidth и naturalHeight.
-            // Они дают истинный размер изображения. Если какртинка еще не загрузилась,
-            // то они должны быть равны нулю.
             if (typeof img.naturalWidth !== "undefined" && img.naturalWidth === 0) {
                 return false;
             }
-            // Картинка загружена.
             return true;
         }
 
