@@ -2,7 +2,7 @@
 /* eslint eqeqeq: 0 */
 
 
-/* v2.4/w */
+/* v2.5/w */
 
 
 (function($){
@@ -20,7 +20,7 @@
             controlsClass: 'gallery__controls',
             animateSpeed: 1000,
             imgPadding: 15,
-            autoplay: true,
+            autoplay: false,
             autoplayDelay: 3000,
 
         }, options);
@@ -28,12 +28,14 @@
 
         //Default variables
         var $this = $(this) // .gallery
+          , $galleryBlock
           , $imgBlock = $this.find('.'+ settings.imgBlockClass) // .gallery__img-block
           , $controlsBlock = $this.find('.'+ settings.controlsClass) // .gallery__controls
           , $prevButton // .gallery .prev
           , $nextButton // .gallery .next
           , $controlsItem // .gallery__controls__item
           , $galleryInner // .gallery__inner
+          , $descriptionBlock
           , galleryInnerPosition // css left of gallery inner
           , $currentBlock // .gallery__img-block.current
           , currentBlockIndex // index of current block
@@ -41,8 +43,10 @@
 
 
         //Classess
-        var _galleryInnerClass = 'gallery__inner';
+        var _galleryInnerClass = 'gallery__inner'
+          , _galleryDescriptionClass = 'gallery__description-block';
 
+        //Timer
         var sliderTimer;
 
         function updatevariables() {
@@ -53,12 +57,14 @@
             $controlsItem = $('.gallery__controls__item');
             $galleryInner = $('.gallery__inner');
             $currentBlock = $galleryInner.find('.gallery__img-block.current');
+            $descriptionBlock = $imgBlock.find('.gallery__img-block__description');
             currentBlockIndex = $currentBlock.index();
         }
 
         function updateSlideVariables() {
             $currentBlock = $galleryInner.find('.gallery__img-block.current');
             currentBlockIndex = $currentBlock.index();
+            $descriptionBlock = $imgBlock.find('.gallery__img-block__description');
             //console.log(currentBlockIndex);
             //console.log(galleryInnerPosition)
         }
@@ -180,6 +186,25 @@
             updatevariables();
         }
 
+        function createDescription() {
+            $galleryBlock.after('<div class="' + _galleryDescriptionClass + '"></div>');
+
+            //console.log(currentBlockIndex);
+            $descriptionBlock.each(function() {
+                $('.' + _galleryDescriptionClass).append($(this));
+            })
+
+            $descriptionBlock.eq(currentBlockIndex).addClass('current');
+
+            updatevariables();
+        }
+
+        function changeDescription(currentIndex, index) {
+            $descriptionBlock = $('.' + _galleryDescriptionClass).find('.gallery__img-block__description');
+            $descriptionBlock.eq(currentIndex).removeClass('current');
+            $descriptionBlock.eq(index).addClass('current');
+        }
+
         function showImg() {
             $imgBlock.each(function(index){
                 if (index != 0) {
@@ -206,16 +231,19 @@
 
                 $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
 
-                updateSlideVariables();
+                //updateSlideVariables();
 
                 if (settings.autoplay ) {
                     clearInterval(sliderTimer);
                     autoplay();
                 }
 
+                changeDescription(currentBlockIndex - 1, currentBlockIndex);
+
                 if (callback) {
                     callback();
                 }
+                updateSlideVariables();
             }
             return currentBlockIndex;
         }
@@ -246,6 +274,8 @@
                     autoplay();
                 }
 
+                changeDescription(currentBlockIndex + 1, currentBlockIndex);
+
                 if (callback) {
                     callback();
                 }
@@ -271,11 +301,15 @@
                 galleryInnerPosition = - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
             }
 
+            changeDescription($galleryInner.find('.current').index(), thisIndex);
+
             $galleryInner.find('.current').removeClass('current');
             $imgBlock.eq(thisIndex).addClass('current');
 
             $controlsBlock.find('.current').removeClass('current');
             $controlsItem.eq(thisIndex).addClass('current');
+
+
 
             updateSlideVariables();
 
@@ -365,7 +399,7 @@
             setInnerWidth();
 
             createControls();
-
+            createDescription();
 
 
             getCurrentSlide();

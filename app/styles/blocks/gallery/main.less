@@ -2,7 +2,7 @@
     width: 100%;
     overflow: hidden;
     position: relative;
-    background-color: #eee;
+    background-color: #929292;
 
     &__inner {
         font-size: 0;
@@ -23,7 +23,7 @@
         vertical-align: top;
         //padding-right: 15px;
 
-        &__description {
+        /*&__description {
             position: absolute;
             top: 50%;
             left: 0;
@@ -32,6 +32,16 @@
             font-weight: bold;
             color: #fff;
             z-index: 2;
+        }*/
+
+        &__description {
+            font-size: 20px;
+            color: #222;
+            display: none;
+
+            &.current {
+                display: inline-block;
+            }
         }
 
         &__img {
@@ -42,6 +52,10 @@
             background: url('@{blockPaths}/gallery/images/sunny.gif') center no-repeat;
             background-size: 40px;
         }
+    }
+
+    &__description-block {
+        padding: 15px 25px 0;
     }
 
     &__img-block:first-child {
@@ -67,7 +81,7 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            background: white;
+            background: grey;
             border: 2px solid white;
             margin: 0 15px;
             border-radius: 50%;
