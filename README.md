@@ -13,9 +13,9 @@ vit-Gallery - это jQuery плагин позволяющий без особ�
 
 #### Добавьте в head вашего сайта :
 
-```<script type="text/javascript" src="app/scripts/vendor/jquery-3.1.1.min.js"></script>
-<script type="text/javascript" src="app/scripts/repo/gallery.js"></script>
-<link rel="stylesheet" type="text/css" href="dist/styles/__main.css">```
+```<script type="text/javascript" src="app/scripts/vendor/jquery-3.1.1.min.js"></script>```
+```<script type="text/javascript" src="app/scripts/repo/gallery.js"></script>```
+```<link rel="stylesheet" type="text/css" href="dist/styles/__main.css">```
 
 #### и в body
 
