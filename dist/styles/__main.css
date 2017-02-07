@@ -29,6 +29,8 @@ html {
   display: none;
   position: relative;
   text-align: center;
+  height: 100%;
+  vertical-align: top;
 }
 .gallery__img-block__description {
   position: absolute;
@@ -38,9 +40,14 @@ html {
   font-size: 45px;
   font-weight: bold;
   color: #fff;
+  z-index: 2;
 }
 .gallery__img-block__img {
   max-width: 100%;
+}
+.gallery__img-block.load {
+  background: url('../../app/styles/blocks/gallery/images/sunny.gif') center no-repeat;
+  background-size: 40px;
 }
 .gallery__img-block:first-child {
   display: inline-block;

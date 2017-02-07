@@ -2,7 +2,7 @@
 /* eslint eqeqeq: 0 */
 
 
-/* v2.1/w */
+/* v2.2/w */
 
 
 (function($){
@@ -20,8 +20,8 @@
             controlsClass: 'gallery__controls',
             animateSpeed: 1000,
             imgPadding: 15,
-            autoplay: false,
-            autoplayDelay: 500,
+            autoplay: true,
+            autoplayDelay: 3000,
 
         }, options);
 
@@ -43,6 +43,8 @@
         //Classess
         var _galleryInnerClass = 'gallery__inner';
 
+        var sliderTimer;
+
         function updatevariables() {
             $controlsBlock = $this.find('.' + settings.controlsClass);
             $prevButton = $('.prev');
@@ -56,6 +58,7 @@
         function updateSlideVariables() {
             $currentBlock = $galleryInner.find('.gallery__img-block.current');
             currentBlockIndex = $currentBlock.index();
+            //console.log(currentBlockIndex);
             //console.log(galleryInnerPosition)
         }
 
@@ -72,21 +75,17 @@
 
         function getFullWidth() {
             var imgBlockWidth = 0;
-
             if (settings.imgPadding && settings.imgPadding != 0) {
                 imgBlockWidth = ($imgBlock.length - 1) * settings.imgPadding;
             }
-
             $imgBlock.each(function(){
                 imgBlockWidth = imgBlockWidth + $(this).outerWidth();
             })
-
             return imgBlockWidth;
         }
 
         function setInnerWidth() {
             var inner = $('.' + _galleryInnerClass);
-
             inner.css('width', getFullWidth());
         }
 
@@ -95,7 +94,6 @@
         }
 
         function setGalleryHeight() {
-
             var heightArr = [];
 
             $imgBlock.each(function(){
@@ -103,11 +101,12 @@
                 heightArr.push(imhHeight);
             })
 
+            var galleryHeight;
 
             if (!settings.galleryHeight || settings.galleryHeight == 'auto') {
-                var galleryHeight = $this.css('height', Math.max.apply(null, heightArr));
+                galleryHeight = $this.css('height', Math.max.apply(null, heightArr));
             } else {
-                var galleryHeight = $this.css('height', settings.galleryHeight);
+                galleryHeight = $this.css('height', settings.galleryHeight);
             }
 
             $imgBlock.each(function(){
@@ -116,7 +115,7 @@
                 $(this).addClass('load');
 
 
-                img.bindImageLoad(function () {
+                img.bindImageLoad(function () { //Plugin for load image (look at the end of page)
 
                     var img = $(this);
                     setTimeout(function () {
@@ -157,7 +156,6 @@
                   , item = '<li class="gallery__controls__item"></li>'
                   ;
 
-
                 for (var i=0; $imgBlock.length > i; i++) {
                     var newItem = $controlsBlock.append(item);
 
@@ -171,10 +169,7 @@
                 var galleryUl = $(newItem).find('li').wrapAll('<ul class="gallery__controls__ul"></ul>');
 
                 $(galleryUl).parent().before(prev).after(next);
-
             }
-
-
         }
 
         function showImg() {
@@ -186,9 +181,7 @@
         }
 
         function nextSlide(callback) {
-            //console.log(galleryInnerPosition)
             if (!$currentBlock.is(':last-child')) {
-                //console.log(currentBlockIndex);
 
                 $galleryInner.animate({
                     left: galleryInnerPosition - $imgBlock.width()
@@ -205,16 +198,17 @@
                 $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
 
                 updateSlideVariables();
+                clearInterval(sliderTimer);
+                autoplay();
 
                 if (callback) {
                     callback();
                 }
             }
-
+            return currentBlockIndex;
         }
 
         function prevSlide(callback) {
-            //console.log(galleryInnerPosition)
             if (!$currentBlock.is(':first-child')) {
 
                 $galleryInner.animate({
@@ -234,6 +228,8 @@
                 $('.gallery__controls__item:eq('+  currentBlockIndex +')').addClass('current');
 
                 updateSlideVariables();
+                clearInterval(sliderTimer);
+                autoplay();
 
                 if (callback) {
                     callback();
@@ -242,8 +238,8 @@
 
         }
 
-        function goToSlide(clickItem) {
-            var thisIndex = clickItem.index();
+        function goToSlide(thisIndex) {
+
 
             if (currentBlockIndex < thisIndex) {
                 $galleryInner.animate({
@@ -253,7 +249,6 @@
                 galleryInnerPosition = galleryInnerPosition - ( $imgBlock.width() * ( thisIndex -  currentBlockIndex))
 
             } else {
-                //console.log('(' + $imgBlock.width() + '*' + '(' + thisIndex  + '+' +  currentBlockIndex + ') ) + ' +  galleryInnerPosition )
                 $galleryInner.animate({
                     left: - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
                 }, settings.animateSpeed);
@@ -269,36 +264,53 @@
 
             updateSlideVariables();
 
+            clearInterval(sliderTimer);
+            autoplay();
+
+        }
+
+        function autoplay() {
+            var countSlides = $imgBlock.length;
+
+            sliderTimer = setInterval(function() {
+
+                if ( (currentBlockIndex + 1) / countSlides  == 1  ) {
+                    console.log('the end')
+                    clearInterval(sliderTimer);
+
+                    setTimeout(function() {
+                        goToSlide(0)
+                    }, settings.autoplayDelay / 2);
+                }
+
+                nextSlide();
+
+            }, settings.autoplayDelay);
+
         }
 
         function bindEvents() {
             galleryInnerPosition = parseInt($galleryInner.css('left'));
             currentBlockIndex = $currentBlock.index();
 
-
             $prevButton.on('click', function(){
-
                 $currentBlock = $galleryInner.find('.gallery__img-block.current');
-
                 prevSlide();
             })
 
             $nextButton.on('click', function(){
-
                 $currentBlock = $galleryInner.find('.gallery__img-block.current');
                 nextSlide();
             })
 
             $controlsItem.on('click', function() {
-
-                goToSlide($(this));
+                goToSlide($(this).index());
 
             })
         }
 
         function getCurrentSlide() {
             var index = 0;
-
             if ($galleryInner.find('.current').length > 0) {
                 index = $galleryInner.find('.current').index();
                 $controlsItem.eq(index).addClass('current');
@@ -307,9 +319,7 @@
                 $imgBlock.first().addClass('current');
                 $controlsItem.first().addClass('current');
             }
-
             updateSlideVariables();
-
         }
 
         function init() {
@@ -327,6 +337,10 @@
             getCurrentSlide();
 
             bindEvents();
+
+            if (settings.autoplay ) {
+                autoplay();
+            }
         }
 
         init();
@@ -337,19 +351,12 @@
 ;(function ($) {
     $.fn.bindImageLoad = function (callback) {
         function isImageLoaded(img) {
-            // Во время события load IE и другие браузеры правильно
-            // определяют состояние картинки через атрибут complete.
-            // Исключение составляют Gecko-based браузеры.
             if (!img.complete) {
                 return false;
             }
-            // Тем не менее, у них есть два очень полезных свойства: naturalWidth и naturalHeight.
-            // Они дают истинный размер изображения. Если какртинка еще не загрузилась,
-            // то они должны быть равны нулю.
             if (typeof img.naturalWidth !== "undefined" && img.naturalWidth === 0) {
                 return false;
             }
-            // Картинка загружена.
             return true;
         }
 
