@@ -11,7 +11,7 @@ vit-Gallery - это jQuery плагин позволяющий без особ�
 
 ## Быстрый старт
 
-#### Load the required files :
+#### 1. Load the required files 
 ```
 <script type="text/javascript" src="app/scripts/vendor/jquery-3.1.1.min.js"></script> 
 
@@ -19,7 +19,7 @@ vit-Gallery - это jQuery плагин позволяющий без особ�
 
 <link rel="stylesheet" type="text/css" href="dist/styles/__main.css">
 ```
-#### Create the HTML markup
+#### 2. Create the HTML markup
 ```
 <div class="gallery">
     <div class="gallery__img-block ">
@@ -36,7 +36,7 @@ vit-Gallery - это jQuery плагин позволяющий без особ�
     </div>
 </div>
 ```
-#### init gallery :
+#### 3. init gallery 
 ```
 <script>  
     $(document).ready(function(){
