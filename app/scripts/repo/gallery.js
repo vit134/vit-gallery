@@ -16,7 +16,7 @@
             buttons: true,
             galleryHeight: 'auto',
             imgBlockClass: 'gallery__img-block',
-            controls: true,
+            controls: 'thumbnails',
             controlsClass: 'gallery__controls',
             animateSpeed: 1000,
             imgPadding: 15,
@@ -44,7 +44,9 @@
 
         //Classess
         var _galleryInnerClass = 'gallery__inner'
-          , _galleryDescriptionClass = 'gallery__description-block';
+          , _galleryDescriptionClass = 'gallery__description-block'
+          , _thumbnailImgClass = 'gallery__img-block__thumbnail'
+          ;
 
         //Timer
         var sliderTimer;
@@ -157,6 +159,47 @@
 
             getCurrentSlide();
             updatevariables();
+        }
+
+        function createThumbnails() {
+            console.log('thumb');
+            if (settings.controls) {
+                $controlsBlock = $this.find('.' + settings.controlsClass);
+
+                var prev = '<span class="prev"></span>'
+                  , next = '<span class="next"></span>'
+                  , item = '<li class="gallery__controls__thumbnail-item"></li>'
+                  , newItem
+                  ;
+
+
+                $imgBlock.each(function() {
+                    var $thumnailImg = $(this).find('.' + _thumbnailImgClass);
+                    $thumnailImg.attr('data-index', $(this).index())
+                    var newItem = $controlsBlock.append($thumnailImg);
+
+                })
+
+
+                /*for (var i=0; $imgBlock.length > i; i++) {
+                    var newItem = $controlsBlock.append(item);
+
+                }*/
+
+                /*$('.gallery__controls__item').each(function(index){
+                    $(this).addClass('item_' + index)
+                })*/
+
+                $controlsBlock.append(newItem);
+                var galleryUl = $(newItem).find('li').wrapAll('<ul class="gallery__controls__thumbnails-ul"></ul>');
+
+                $(galleryUl).parent().before(prev).after(next);
+
+            }
+
+            getCurrentSlide();
+            updatevariables();
+
         }
 
         function createDescription() {
@@ -371,7 +414,12 @@
             setImgBlockWidth();
             setInnerWidth();
 
-            createControls();
+            if (settings.controls == 'points'){
+                createControls();
+            } else if (settings.controls == 'thumbnails') {
+                createThumbnails();
+            }
+
             createDescription();
 
             setImgBlockWidth();
