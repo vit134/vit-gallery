@@ -91,6 +91,7 @@
             $imgBlock.each(function(){
                 imgBlockWidth = imgBlockWidth + $(this).outerWidth();
             })
+
             updatevariables();
             return imgBlockWidth;
         }
@@ -98,33 +99,20 @@
         function setInnerWidth() {
             var inner = $('.' + _galleryInnerClass);
             inner.css('width', getFullWidth());
+
             updatevariables();
         }
 
         function setImgBlockWidth() {
             $imgBlock.css('width', $this.width());
+
             updatevariables();
         }
 
         function setGalleryHeight() {
-            var heightArr = [];
-
-            $imgBlock.each(function(){
-                var imhHeight = $(this).find('.gallery__img-block__img').height();
-                heightArr.push(imhHeight);
-            })
-
-            var galleryHeight;
-
-            if (!settings.galleryHeight || settings.galleryHeight == 'auto') {
-                galleryHeight = $galleryBlock.css('height', Math.max.apply(null, heightArr));
-            } else {
-                galleryHeight = $galleryBlock.css('height', settings.galleryHeight);
-            }
 
             $imgBlock.each(function(){
                 var img = $(this).find('.gallery__img-block__img');
-                img.css('opacity', 0);
                 $(this).addClass('load');
 
 
@@ -132,30 +120,14 @@
 
                     var img = $(this);
                     setTimeout(function () {
-                        var imgWidth = img.width()
-                          , imgHeight = img.height()
-                          ;
-                        // передаем картинку и её размеры на обработку
-                        var styles = {
-                            position: 'absolute',
-                            top: '50%',
-                            marginTop: -(imgHeight / 2),
-                            left: '50%',
-                            marginLeft: - (imgWidth / 2)
-                        }
-
-                        img.css('opacity', 1);
                         img.parent().removeClass('load');
-
-                        if (imgHeight < galleryHeight.height()) {
-                            img.css(styles)
-                        }
                         // обнуляем переменную, чтобы GC сделал свою работу
                         img = null;
                     }, 100);
 
                 });
             })
+
             updatevariables();
         }
 
@@ -183,6 +155,7 @@
                 $(galleryUl).parent().before(prev).after(next);
             }
 
+            getCurrentSlide();
             updatevariables();
         }
 
@@ -193,7 +166,7 @@
             $descriptionBlock.each(function() {
                 $('.' + _galleryDescriptionClass).append($(this));
             })
-
+            console.log(currentBlockIndex)
             $descriptionBlock.eq(currentBlockIndex).addClass('current');
 
             updatevariables();
@@ -401,7 +374,7 @@
             createControls();
             createDescription();
 
-
+            setImgBlockWidth();
             getCurrentSlide();
 
             bindEvents();
