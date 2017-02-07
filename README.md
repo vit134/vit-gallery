@@ -12,7 +12,7 @@ vit-gallery.andryushkov.ru
 ## быстрый старт
 
 Добавьте в <head> вашего сайта :
-<script type="text/javascript" src="app/scripts/vendor/jquery-3.1.1.min.js"></script>
+<code><script type="text/javascript" src="app/scripts/vendor/jquery-3.1.1.min.js"></script></code>
 <script type="text/javascript" src="app/scripts/repo/gallery.js"></script>
 <link rel="stylesheet" type="text/css" href="dist/styles/__main.css">
 
