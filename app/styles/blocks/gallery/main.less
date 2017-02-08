@@ -22,18 +22,6 @@
         text-align: center;
         height: 100%;
         vertical-align: middle;
-        //padding-right: 15px;
-
-        /*&__description {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 100%;
-            font-size: 45px;
-            font-weight: bold;
-            color: #fff;
-            z-index: 2;
-        }*/
 
         &__description {
             font-size: 20px;
@@ -78,6 +66,18 @@
             vertical-align: middle;
         }
 
+        &__thumbnails-ul {
+            display: inline-block;
+            vertical-align: middle;
+            width: 90%;
+            text-align: left;
+            overflow: hidden;;
+        }
+
+        &__inner {
+            position: relative;
+        }
+
         &__item {
             display: inline-block;
             width: 20px;
@@ -119,6 +119,17 @@
         & .next {
             background: url('@{blockPaths}/gallery/images/right_white.png') center no-repeat;
             background-size: 100%;
+        }
+    }
+
+    &__thumbnail {
+        border: 3px solid;
+        margin-right: 15px;
+        opacity: 0.8;
+
+        &.current {
+            opacity: 1;
+            border: 3px solid green;
         }
     }
 }
