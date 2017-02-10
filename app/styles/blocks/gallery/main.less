@@ -3,6 +3,7 @@
     overflow: hidden;
     position: relative;
     background-color: #929292;
+    box-sizing:border-box;
 
     &__inner {
         font-size: 0;
@@ -44,7 +45,9 @@
     }
 
     &__description-block {
-        padding: 15px 25px 0;
+        padding: 15px 0 0;
+        width: 90%;
+        margin: 0 auto;
     }
 
     &__img-block:first-child {
@@ -71,20 +74,27 @@
             vertical-align: middle;
             width: 90%;
             text-align: left;
-            overflow: hidden;;
+            overflow: hidden;
         }
 
         &__inner {
             position: relative;
+
+            &.go-back {
+                transition:All 0.3s ease;
+                -webkit-transition:All 0.3s ease;
+                -moz-transition:All 0.3s ease;
+                -o-transition:All 0.3s ease;
+            }
         }
 
         &__item {
             display: inline-block;
-            width: 20px;
-            height: 20px;
+            width: 10px;
+            height: 10px;
             background: grey;
             border: 2px solid white;
-            margin: 0 15px;
+            margin: 0 10px;
             border-radius: 50%;
             cursor: pointer;
 

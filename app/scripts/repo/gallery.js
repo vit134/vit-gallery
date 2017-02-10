@@ -1,6 +1,6 @@
-/* eslint no-console: 0 */
-/* eslint eqeqeq: 0 */
 
+/* eslint eqeqeq: 0 */
+/* eslint no-unused-vars: 0 */
 
 /* v2.6/w thumbnail*/
 
@@ -18,10 +18,11 @@
             imgBlockClass: 'gallery__img-block',
             controls: 'thumbnails',
             controlsClass: 'gallery__controls',
-            thumnailWidth: 100,
-            thumnaiHeight: 50,
+            thumnailWidth: 90,
+            thumnaiHeight: 60,
             thumbnailMargin: 15,
             animateSpeed: 1000,
+            description: true,
             imgPadding: 15,
             autoplay: false,
             autoplayDelay: 3000,
@@ -122,7 +123,6 @@
 
         function setImgBlockWidth() {
             $imgBlock.css('width', $this.width());
-
             updatevariables('setImgBlockWidth');
         }
 
@@ -206,32 +206,33 @@
                               .css('margin-right', settings.thumbnailMargin)
                               .attr('data-index', $(this).index());
 
-                    $galleryControlsInner.css({
-                        width: $galleryControlsInner.width() +  $(newItem).outerWidth(),
-                        left: 0
-                    });
+
                     $galleryControlsInner.append($(newItem));
                 })
 
+
+                $galleryControlsInner.css({
+                    width: ( $(newItem).outerWidth() + settings.thumbnailMargin ) * $('.' + _thumbnailImgClass).length,
+                    left: 0
+                });
+
                 $galleryControlsUl.before(prev).after(next);
                 updatevariables('createThumbnails');
-                getCurrentSlide();
+                //getCurrentSlide();
 
             }
         }
 
         function getCenterThumbnail() {
-            var containerWidth = $galleryControlsUl.outerWidth();
+            var containerWidth = $galleryControlsUl.outerWidth()
+              , $thumnail = $('.gallery__thumbnail')
+              , thumnailWidth = $thumnail.outerWidth()
+              , countThumbInCont = Math.round( containerWidth / thumnailWidth ) / 2
+              ;
 
-            var $thumnail = $('.gallery__thumbnail')
-            var thumnailWidth = $thumnail.outerWidth();
-
-            var countThumbInCont = Math.round( containerWidth / thumnailWidth ) / 2;
-
+            countThumbInCont = Math.round(countThumbInCont)
             $centerThumbnail = $thumnail.eq(countThumbInCont - 1);
-
             $centerThumbnail.addClass('center');
-
         }
 
         function createDescription() {
@@ -264,65 +265,33 @@
 
         function nextSlide(callback) {
             if (!$currentBlock.is(':last-child')) {
-
                 $galleryInner.animate({
                     left: galleryInnerPosition - $imgBlock.width()
                 }, settings.animateSpeed);
-
                 galleryInnerPosition = galleryInnerPosition - $imgBlock.width();
-
                 $currentBlock.removeClass('current');
                 $currentBlock.next().addClass('current');
-
-
-
                 $controlsItem.eq(currentBlockIndex).removeClass('current');
-
                 currentBlockIndex++;
-
                 $controlsItem.eq(currentBlockIndex).addClass('current');
-
-
                 if (settings.autoplay ) {
                     clearInterval(sliderTimer);
                     autoplay();
                 }
-
                 changeDescription(currentBlockIndex - 1, currentBlockIndex);
-
                 if (callback) {
                     callback();
                 }
-
                 updateSlideVariables();
                 getCurrentSlide();
 
-
                 if (settings.controls == 'thumbnails'){
-                    if ($currentControlItem.index() >= $centerThumbnail.index() && $currentControlItem.index() <= $controlsItem.length - $centerThumbnail.index()) {
-                        console.log('in center');
-                        scrollControls('back');
-                    }
+                    var containerOffsetEnd = $galleryControlsUl.offset().left + $galleryControlsUl.outerWidth();
+                    var lastItemOffset = $controlsItem.last().offset().left + $controlsItem.last().outerWidth() + settings.thumbnailMargin;
                 }
             }
 
             return currentBlockIndex;
-        }
-
-        function scrollControls(direction) {
-            console.log($galleryControlsInner);
-            var controlsInnerPosition = parseInt($galleryControlsInner.css('left'));
-
-            if (direction == 'back') {
-                $galleryControlsInner.animate({
-                    left: controlsInnerPosition - $controlsItem.outerWidth()
-                }, settings.animateSpeed)
-            } else if (direction == 'forward') {
-                $galleryControlsInner.animate({
-                    left: controlsInnerPosition + $controlsItem.outerWidth()
-                }, settings.animateSpeed)
-            }
-
         }
 
         function prevSlide(callback) {
@@ -358,16 +327,30 @@
                 getCurrentSlide();
 
                 if (settings.controls == 'thumbnails'){
-                    if ($currentControlItem.index() >= $centerThumbnail.index() && $currentControlItem.index() <= $controlsItem.length - $centerThumbnail.index()) {
-                        scrollControls('forward');
-                    }
+                    var containerOffsetBegin = $galleryControlsUl.offset().left;
+                    var firstItemOffset = $controlsItem.first().offset().left;
                 }
             }
+        }
 
+        function scrollControls(direction) {
+
+            var controlsInnerPosition = parseInt($galleryControlsInner.css('left'));
+
+            if (direction == 'back') {
+                $galleryControlsInner.animate({
+                    left: controlsInnerPosition - ( $controlsItem.outerWidth() + settings.thumbnailMargin)
+                }, settings.animateSpeed)
+            } else if (direction == 'forward') {
+                $galleryControlsInner.animate({
+                    left: controlsInnerPosition + ( $controlsItem.outerWidth() + settings.thumbnailMargin)
+                }, settings.animateSpeed)
+            }
+
+            updateSlideVariables();
         }
 
         function goToSlide(thisIndex) {
-
 
             if (currentBlockIndex < thisIndex) {
                 $galleryInner.animate({
@@ -404,11 +387,11 @@
 
         function autoplay() {
             var countSlides = $imgBlock.length;
-
+            console.log('autoplay');
             sliderTimer = setInterval(function() {
 
                 if ( (currentBlockIndex + 1) / countSlides  == 1  ) {
-                    console.log('the end')
+                    console.log('the end');
                     clearInterval(sliderTimer);
 
                     setTimeout(function() {
@@ -443,12 +426,63 @@
 
             })
 
-            $(window).on('resize', function() {
+            if (settings.controls == 'thumbnails'){
+                $galleryControlsInner.on('mousedown', function( e ) {
+                    var clickPosition = e.pageX
+                      , startPosition = $galleryControlsInner.css('left')
+                      , offsetLeft = $(this).offset().left
+                      , offsetRight = $(this).offset().left + $(this).outerWidth()
+                      , oldX
+                      , newX
+                      ;
 
+                    $(window).on('mousemove', function(e) {
+
+                        var delta = clickPosition - e.pageX;
+                        var oldX = e.pageX;
+
+                        (function() {
+                            setTimeout(function() {
+                                newX = e.pageX
+                            }, 50)
+                        })()
+
+                        if (oldX > newX ) {
+                            $galleryControlsInner.css('left', parseInt(startPosition) - delta);
+                        }
+
+                        if (oldX < newX){
+                            $galleryControlsInner.css('left', parseInt(startPosition) - delta);
+                        }
+
+                        e.preventDefault();
+                    }).on('mouseup', function(e) {
+                        //$(e.target).unbind('mouseup');
+                        e.preventDefault();
+
+                        if ($galleryControlsInner.offset().left >= $galleryControlsInner.parent().offset().left) {
+                            $galleryControlsInner.addClass('go-back').css('left', 0)
+                            setTimeout(function() {
+                                $galleryControlsInner.removeClass('go-back')
+                            },300)
+                        }
+
+                        if ($galleryControlsInner.offset().left + $galleryControlsInner.outerWidth()  <= $galleryControlsInner.parent().offset().left + $galleryControlsInner.parent().outerWidth()) {
+                            $galleryControlsInner.addClass('go-back').css('left', $galleryControlsInner.parent().outerWidth() - $galleryControlsInner.outerWidth())
+                            setTimeout(function() {
+                                $galleryControlsInner.removeClass('go-back')
+                            },300)
+                        }
+                        $(this).unbind('mousemove');
+                    })
+                    e.preventDefault();
+                })
+            }
+
+            $(window).on('resize', function() {
                 if (settings.autoplay ) {
                     clearInterval(sliderTimer);
                 }
-
                 setGalleryHeight();
                 setImgBlockWidth();
                 setInnerWidth();
@@ -456,17 +490,37 @@
 
                 $galleryInner.css('left', - (currentBlockIndex * $currentBlock.width()));
                 galleryInnerPosition = - (currentBlockIndex * $currentBlock.width())
-                autoplay();
+                if (settings.autoplay ) {
+                    autoplay();
+                }
             })
         }
 
         function getCurrentSlide() {
             var index = 0;
-            //console.log($controlsItem);
+
             if ($galleryInner.find('.current').length > 0) {
                 index = $galleryInner.find('.current').index();
+
+                if (settings.controls == 'thumbnails'){
+                    var curentItemOffset = $controlsItem.eq(index).offset().left + (($controlsItem.outerWidth() + settings.thumbnailMargin) / 2)
+                      , centerItemOffset = $centerThumbnail.offset().left + (($controlsItem.outerWidth() + settings.thumbnailMargin) / 2)
+                      ;
+
+                    if ($controlsItem.eq(index).index() > $centerThumbnail.index() - 1 && $controlsItem.eq(index).index() < $controlsItem.length - $centerThumbnail.index() + 1) {
+
+                        $galleryControlsInner.animate({
+                            left: -(curentItemOffset - centerItemOffset)
+                        }, 300)
+
+                    }
+                }
+
                 $controlsItem.eq(index).addClass('current');
                 $galleryInner.css('left', - (index * $imgBlock.width()));
+
+
+
             } else {
                 $imgBlock.first().addClass('current');
                 $controlsItem.first().addClass('current');
@@ -486,29 +540,24 @@
             setImgBlockWidth();
             setInnerWidth();
 
-
             if (settings.controls == 'points'){
                 createControls();
             } else if (settings.controls == 'thumbnails') {
                 createThumbnails();
-                getCenterThumbnail()
-            }
+                getCenterThumbnail();
 
+            }
 
             getCurrentSlide();
 
-            createDescription();
-
-            setImgBlockWidth();
-
-
+            if (settings.description) {
+                createDescription();
+            }
             bindEvents();
 
             if (settings.autoplay ) {
                 autoplay();
             }
-
-
         }
 
         init();
@@ -539,3 +588,47 @@
         });
     };
 })(jQuery);
+
+/*(function($) {
+    $.fn.drags = function(opt) {
+
+        opt = $.extend({
+            handle: '',
+            cursor: 'default'
+        }, opt);
+
+        if (opt.handle === "") {
+            var $el = this;
+        } else {
+            var $el = this.find(opt.handle);
+        }
+
+        return $el.css('cursor', opt.cursor).on("mousedown", function(e) {
+            if (opt.handle === "") {
+                var $drag = $(this).addClass('draggable');
+            } else {
+                var $drag = $(this).addClass('active-handle').parent().addClass('draggable');
+            }
+            var z_idx = $drag.css('z-index'),
+                drg_h = $drag.outerHeight(),
+                drg_w = $drag.outerWidth(),
+                pos_y = $drag.offset().top + drg_h - e.pageY,
+                pos_x = $drag.offset().left + drg_w - e.pageX;
+            $drag.css('z-index', 1000).parents().on("mousemove", function(e) {
+                $('.draggable').offset({
+                    left:e.pageX + pos_x - drg_w
+                }).on("mouseup", function() {
+                    $(this).removeClass('draggable').css('z-index', z_idx);
+                });
+            });
+            e.preventDefault(); // disable selection
+        }).on("mouseup", function() {
+            if (opt.handle === "") {
+                $(this).removeClass('draggable');
+            } else {
+                $(this).removeClass('active-handle').parent().removeClass('draggable');
+            }
+        });
+
+    }
+})(jQuery);*/

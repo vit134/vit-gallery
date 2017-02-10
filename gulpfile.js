@@ -6,6 +6,7 @@ var gulp = require('gulp')
   , uglify = require('gulp-uglify')
   , imagemin = require('gulp-imagemin')
   , pngquant = require('imagemin-pngquant')
+  , eslint = require('gulp-eslint')
   ;
 
 //paths
@@ -68,4 +69,20 @@ gulp.task('images', function () {
     .pipe(gulp.dest(gulp.paths.images.dst));
 });
 
-gulp.task('build', ['styles', 'scripts']);
+gulp.task('lint', function() {
+    return gulp.src([
+        gulp.paths.scripts.src + '/repo/**/*.js',
+        gulp.paths.scripts.src + '/*.js'
+    ])
+    .pipe(eslint({
+        'rules': {
+            'camelcase': 'error',
+            'no-console': 1
+        }
+    }))
+    .pipe(eslint.format())
+    // Brick on failure to be super strict
+    .pipe(eslint.failOnError());
+});
+
+gulp.task('build', ['styles', 'scripts', 'lint']);
