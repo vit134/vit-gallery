@@ -20,7 +20,7 @@
             controlsClass: 'gallery__controls',
             thumnailWidth: 90,
             thumnaiHeight: 60,
-            thumbnailMargin: 15,
+            thumbnailMargin: 5,
             animateSpeed: 1000,
             description: true,
             imgPadding: 15,
@@ -148,14 +148,22 @@
             updatevariables('setGalleryHeight');
         }
 
+        function createControlsButton() {
+            var prev = '<span class="prev"></span>'
+              , next = '<span class="next"></span>'
+              , buttonBlock = '<div class="gallery__controls-buttons"></div>'
+              ;
+
+            var newItem = $galleryBlock.append($(buttonBlock));
+
+            newItem.find('.gallery__controls-buttons').append($(prev)).append($(next))
+        }
+
         function createControls() {
             if (settings.controls) {
                 $controlsBlock = $this.find('.' + settings.controlsClass);
 
-                var prev = '<span class="prev"></span>'
-                  , next = '<span class="next"></span>'
-                  , item = '<li class="gallery__controls__item"></li>'
-                  ;
+                var item = '<li class="gallery__controls__item"></li>';
 
                 for (var i=0; $imgBlock.length > i; i++) {
                     var newItem = $controlsBlock.append(item);
@@ -169,7 +177,6 @@
                 $controlsBlock.append(newItem);
                 var galleryUl = $(newItem).find('li').wrapAll('<ul class="gallery__controls__ul"></ul>');
 
-                $(galleryUl).parent().before(prev).after(next);
             }
 
             //getCurrentSlide();
@@ -177,9 +184,7 @@
         }
 
         function createThumbnails() {
-            var prev = '<span class="prev"></span>'
-              , next = '<span class="next"></span>'
-              , controlInner = '<div class="gallery__controls__inner"></div>'
+            var controlInner = '<div class="gallery__controls__inner"></div>'
               , controlsThumbnailul = '<div class="gallery__controls__thumbnails-ul"></div>'
               , newItem
               ;
@@ -216,7 +221,6 @@
                     left: 0
                 });
 
-                $galleryControlsUl.before(prev).after(next);
                 updatevariables('createThumbnails');
                 //getCurrentSlide();
 
@@ -391,7 +395,6 @@
             sliderTimer = setInterval(function() {
 
                 if ( (currentBlockIndex + 1) / countSlides  == 1  ) {
-                    console.log('the end');
                     clearInterval(sliderTimer);
 
                     setTimeout(function() {
@@ -535,6 +538,7 @@
         function init() {
             addClasses();
             addWrapper();
+            createControlsButton();
             showImg();
             setGalleryHeight();
             setImgBlockWidth();
