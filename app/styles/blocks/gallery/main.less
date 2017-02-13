@@ -19,12 +19,14 @@
 
     &__block:hover & {
         &__controls-buttons {
-            &.prev {
+            & .prev {
                 left: 0;
+                background-position: center;
             }
 
-            &.next {
+            & .next {
                 right: 0;
+                background-position: center;
             }
         }
     }
@@ -148,23 +150,25 @@
             -moz-transition: All 0.3s ease;
             -o-transition: All 0.3s ease;
             background-color: rgba(255,255,255, 0.8);
-            background-position: center;
+
             background-repeat: no-repeat;
             border-radius: 0 20px 20px 0;
         }
 
         & .prev {
-            left: 0;
-            background-image: url('@{blockPaths}/gallery/images/left_white.png');
+            left: -25px;
+            background-image: url('@{blockPaths}/gallery/images/left_black.png');
             background-size: 30px;
             border-radius: 0 20px 20px 0;
+            background-position: right;
         }
 
         & .next {
-            right: 0;
-            background-image: url('@{blockPaths}/gallery/images/right_white.png');
+            right: -25px;
+            background-image: url('@{blockPaths}/gallery/images/right_black.png');
             background-size: 30px;
             border-radius: 20px 0 0 20px;
+            background-position: left;
         }
     }
 

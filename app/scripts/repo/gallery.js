@@ -2,7 +2,7 @@
 /* eslint eqeqeq: 0 */
 /* eslint no-unused-vars: 0 */
 
-/* v2.6/w thumbnail*/
+/* v3.2/w last work version*/
 
 
 (function($){
