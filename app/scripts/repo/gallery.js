@@ -16,7 +16,7 @@
             buttons: true,
             galleryHeight: 'auto',
             imgBlockClass: 'gallery__img-block',
-            controls: 'thumbnails',
+            controls: 'thumbnails', // points thumbnails
             controlsClass: 'gallery__controls',
             thumnailWidth: 90,
             thumnaiHeight: 60,
@@ -26,6 +26,8 @@
             imgPadding: 15,
             autoplay: false,
             autoplayDelay: 3000,
+            fullscreen: true,
+            transition: 'slide' // slide crossfade
 
         }, options);
 
@@ -48,6 +50,7 @@
           , $currentControlItem
           , $galleryControlsInner
           , controlsInnerPosition
+          , $fullscreenWrap
           ;
 
 
@@ -56,6 +59,9 @@
           , _galleryDescriptionClass = 'gallery__description-block'
           , _thumbnailImgClass = 'gallery__thumbnail'
           , _controlsClass = 'gallery__controls'
+          , _fullscreenWrapClass = 'gallery__fullscreen__wrap'
+          , _fullscreenButtonClass = 'gallery__fullscreen__bt'
+          , _fullscreenExitClass =  'gallery__fullscreen__exit'
           ;
 
         //Timer
@@ -157,6 +163,27 @@
             var newItem = $galleryBlock.append($(buttonBlock));
 
             newItem.find('.gallery__controls-buttons').append($(prev)).append($(next))
+        }
+
+        function createFullscreen() {
+            var $body = $('body')
+              , fullscreenButton = '<span class="' + _fullscreenButtonClass + '"></span>'
+              , fullscreenWrap = '<div class="' + _fullscreenWrapClass + '"></div>'
+              , fullscreenClose = '<span class="' + _fullscreenExitClass + '"></span>'
+              ;
+
+            $galleryBlock.append(fullscreenButton);
+
+            $body.append(fullscreenWrap);
+
+            console.log($galleryInner);
+
+
+
+            $fullscreenWrap = $body.find('.' + _fullscreenWrapClass).append(fullscreenClose);
+
+            //$fullscreenWrap.clone().append($galleryInner)
+            //$galleryInner.clone().wrapAll('<div class="wrap">').appendTo($fullscreenWrap)
         }
 
         function createControls() {
@@ -269,10 +296,23 @@
 
         function nextSlide(callback) {
             if (!$currentBlock.is(':last-child')) {
-                $galleryInner.animate({
-                    left: galleryInnerPosition - $imgBlock.width()
-                }, settings.animateSpeed);
-                galleryInnerPosition = galleryInnerPosition - $imgBlock.width();
+
+                if (settings.transition == 'slide'){
+                    $galleryInner.animate({
+                        left: galleryInnerPosition - $imgBlock.width()
+                    }, settings.animateSpeed);
+                    galleryInnerPosition = galleryInnerPosition - $imgBlock.width();
+                } else if (settings.transition == 'crossfade') {
+                    $currentBlock.animate({
+                        opacity: 0
+                    }, 150);
+
+                    $currentBlock.animate({
+                        opacity: 1
+                    }, 150);
+                }
+
+
                 $currentBlock.removeClass('current');
                 $currentBlock.next().addClass('current');
                 $controlsItem.eq(currentBlockIndex).removeClass('current');
@@ -301,11 +341,20 @@
         function prevSlide(callback) {
             if (!$currentBlock.is(':first-child')) {
 
-                $galleryInner.animate({
-                    left: galleryInnerPosition + $imgBlock.width()
-                }, settings.animateSpeed);
+                if (settings.transition == 'slide'){
+                    $galleryInner.animate({
+                        left: galleryInnerPosition + $imgBlock.width()
+                    }, settings.animateSpeed);
+                    galleryInnerPosition = galleryInnerPosition + $imgBlock.width();
+                } else if (settings.transition == 'crossfade') {
+                    $currentBlock.animate({
+                        opacity: 0
+                    }, 150);
 
-                galleryInnerPosition = galleryInnerPosition + $imgBlock.width();
+                    $currentBlock.animate({
+                        opacity: 1
+                    }, 150);
+                }
 
                 $currentBlock.removeClass('current');
                 $currentBlock.prev().addClass('current');
@@ -355,20 +404,29 @@
         }
 
         function goToSlide(thisIndex) {
+            if (settings.transition == 'slide'){
+                if (currentBlockIndex < thisIndex) {
+                    $galleryInner.animate({
+                        left: galleryInnerPosition - ( $imgBlock.width() * ( thisIndex -  currentBlockIndex))
+                    }, settings.animateSpeed);
 
-            if (currentBlockIndex < thisIndex) {
-                $galleryInner.animate({
-                    left: galleryInnerPosition - ( $imgBlock.width() * ( thisIndex -  currentBlockIndex))
-                }, settings.animateSpeed);
+                    galleryInnerPosition = galleryInnerPosition - ( $imgBlock.width() * ( thisIndex -  currentBlockIndex))
 
-                galleryInnerPosition = galleryInnerPosition - ( $imgBlock.width() * ( thisIndex -  currentBlockIndex))
+                } else {
+                    $galleryInner.animate({
+                        left: - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
+                    }, settings.animateSpeed);
 
-            } else {
-                $galleryInner.animate({
-                    left: - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
-                }, settings.animateSpeed);
+                    galleryInnerPosition = - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
+                }
+            } else if (settings.transition == 'crossfade') {
+                $galleryInner.find('.current').animate({
+                    opacity: 0
+                }, 150);
 
-                galleryInnerPosition = - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
+                $galleryInner.find('.current').animate({
+                    opacity: 1
+                }, 150);
             }
 
             changeDescription($galleryInner.find('.current').index(), thisIndex);
@@ -391,7 +449,7 @@
 
         function autoplay() {
             var countSlides = $imgBlock.length;
-            console.log('autoplay');
+            //console.log('autoplay');
             sliderTimer = setInterval(function() {
 
                 if ( (currentBlockIndex + 1) / countSlides  == 1  ) {
@@ -423,11 +481,24 @@
             })
 
 
-
             $controlsItem.on('click', function() {
                 goToSlide($(this).index());
 
             })
+
+            if (settings.fullscreen) {
+                var $fullscreenButton = $('.' + _fullscreenButtonClass)
+                  , $fullscreenExitButton = $('.' + _fullscreenExitClass)
+                  ;
+
+                $fullscreenButton.on('click', function() {
+                    $fullscreenWrap.addClass('open');
+                })
+
+                $fullscreenExitButton.on('click', function() {
+                    $fullscreenWrap.removeClass('open');
+                })
+            }
 
             if (settings.controls == 'thumbnails'){
                 $galleryControlsInner.on('mousedown', function( e ) {
@@ -544,6 +615,10 @@
             setImgBlockWidth();
             setInnerWidth();
 
+            if (settings.fullscreen) {
+                createFullscreen();
+            }
+
             if (settings.controls == 'points'){
                 createControls();
             } else if (settings.controls == 'thumbnails') {
@@ -557,6 +632,7 @@
             if (settings.description) {
                 createDescription();
             }
+
             bindEvents();
 
             if (settings.autoplay ) {

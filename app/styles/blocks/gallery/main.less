@@ -2,8 +2,56 @@
     width: 100%;
     overflow: hidden;
     position: relative;
-    //background-color: #929292;
     box-sizing:border-box;
+
+    &__fullscreen{
+        &__wrap {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: rgba(255,255,255,0.98);
+            opacity: 0;
+
+            transition:All 0.5s ease;
+            -webkit-transition:All 0.5s ease;
+            -moz-transition:All 0.5s ease;
+            -o-transition:All 0.5s ease;
+
+            &.open {
+                display: block;
+                opacity: 1;
+            }
+        }
+
+        &__bt {
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+            width: 30px;
+            height: 30px;
+            background-image: url('@{blockPaths}/gallery/images/fullscreen_black.png');
+            background-repeat: no-repeat;
+            background-size: 100%;
+            z-index: 99;
+            cursor: pointer;
+        }
+
+        &__exit {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            width: 40px;
+            height: 40px;
+            background-image: url('@{blockPaths}/gallery/images/close_black.png');
+            background-repeat: no-repeat;
+            background-size: 100%;
+            cursor: pointer;
+        }
+    }
 
     &__inner {
         font-size: 0;
@@ -38,11 +86,27 @@
         height: 100%;
         vertical-align: middle;
 
+        &.slide {
+            display: none;
+            position: relative;
+            text-align: center;
+            height: 100%;
+            vertical-align: middle;
+        }
+
+        &.crossfade {
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
         &__description {
             font-size: 20px;
             color: #222;
             display: none;
             margin-left: 15px;
+            font-family: @openSans-CondLightItalic;
 
 
             &.current {
