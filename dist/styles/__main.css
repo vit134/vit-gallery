@@ -9,46 +9,46 @@ html {
   margin: 0;
 }
 .wrapper {
-  min-width: 1000px;
-  max-width: 60%;
+  min-width: 600px;
+  max-width: 1080px;
   margin: 0 auto;
 }
 .gallery {
   width: 100%;
   overflow: hidden;
   position: relative;
-  background-color: #929292;
+  box-sizing: border-box;
 }
 .gallery__inner {
   font-size: 0;
-  position: absolute;
+  position: relative;
   left: 0;
   height: 100%;
 }
 .gallery__block {
   position: relative;
+  overflow: hidden;
+}
+.gallery__block:hover .gallery__controls-buttons .prev {
+  left: 0;
+  background-position: center;
+}
+.gallery__block:hover .gallery__controls-buttons .next {
+  right: 0;
+  background-position: center;
 }
 .gallery__img-block {
   display: none;
   position: relative;
   text-align: center;
   height: 100%;
-  vertical-align: top;
-  /*&__description {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 100%;
-            font-size: 45px;
-            font-weight: bold;
-            color: #fff;
-            z-index: 2;
-        }*/
+  vertical-align: middle;
 }
 .gallery__img-block__description {
   font-size: 20px;
   color: #222;
   display: none;
+  margin-left: 15px;
 }
 .gallery__img-block__description.current {
   display: inline-block;
@@ -61,7 +61,12 @@ html {
   background-size: 40px;
 }
 .gallery__description-block {
-  padding: 15px 25px 0;
+  padding: 15px 0;
+  width: 100%;
+  margin: 0 auto;
+  position: absolute;
+  bottom: 80px;
+  background: rgba(255, 255, 255, 0.7);
 }
 .gallery__img-block:first-child {
   display: inline-block;
@@ -71,7 +76,7 @@ html {
   bottom: 0;
   width: 100%;
   text-align: center;
-  padding: 20px 0;
+  padding: 10px 0 0;
 }
 .gallery__controls__ul {
   display: inline-block;
@@ -79,13 +84,29 @@ html {
   padding: 0;
   vertical-align: middle;
 }
+.gallery__controls__thumbnails-ul {
+  display: inline-block;
+  vertical-align: middle;
+  width: 100%;
+  text-align: left;
+  overflow: hidden;
+}
+.gallery__controls__inner {
+  position: relative;
+}
+.gallery__controls__inner.go-back {
+  transition: All 0.3s ease;
+  -webkit-transition: All 0.3s ease;
+  -moz-transition: All 0.3s ease;
+  -o-transition: All 0.3s ease;
+}
 .gallery__controls__item {
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 10px;
+  height: 10px;
   background: grey;
   border: 2px solid white;
-  margin: 0 15px;
+  margin: 0 10px;
   border-radius: 50%;
   cursor: pointer;
 }
@@ -100,19 +121,47 @@ html {
   -o-transform: rotate(90deg);
   -ms-transform: rotate(90deg);
 }
-.gallery__controls .prev,
-.gallery__controls .next {
+.gallery__controls-buttons {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+}
+.gallery__controls-buttons .prev,
+.gallery__controls-buttons .next {
+  position: absolute;
   display: inline-block;
-  width: 30px;
-  height: 30px;
+  width: 60px;
+  height: 40px;
   cursor: pointer;
   vertical-align: middle;
+  transition: All 0.3s ease;
+  -webkit-transition: All 0.3s ease;
+  -moz-transition: All 0.3s ease;
+  -o-transition: All 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.8);
+  background-repeat: no-repeat;
+  border-radius: 0 20px 20px 0;
 }
-.gallery__controls .prev {
-  background: url('../../app/styles/blocks/gallery/images/left_white.png') center no-repeat;
-  background-size: 100%;
+.gallery__controls-buttons .prev {
+  left: -25px;
+  background-image: url('../../app/styles/blocks/gallery/images/left_black.png');
+  background-size: 30px;
+  border-radius: 0 20px 20px 0;
+  background-position: right;
 }
-.gallery__controls .next {
-  background: url('../../app/styles/blocks/gallery/images/right_white.png') center no-repeat;
-  background-size: 100%;
+.gallery__controls-buttons .next {
+  right: -25px;
+  background-image: url('../../app/styles/blocks/gallery/images/right_black.png');
+  background-size: 30px;
+  border-radius: 20px 0 0 20px;
+  background-position: left;
+}
+.gallery__thumbnail {
+  border: 3px solid #fff;
+  margin-right: 15px;
+  opacity: 1;
+}
+.gallery__thumbnail.current {
+  opacity: 1;
+  border: 3px solid #E6292F;
 }

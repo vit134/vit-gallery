@@ -2,17 +2,33 @@
     width: 100%;
     overflow: hidden;
     position: relative;
-    background-color: #929292;
+    //background-color: #929292;
+    box-sizing:border-box;
 
     &__inner {
         font-size: 0;
-        position: absolute;
+        position: relative;
         left: 0;
         height: 100%;
     }
 
     &__block {
         position: relative;
+        overflow: hidden;
+    }
+
+    &__block:hover & {
+        &__controls-buttons {
+            & .prev {
+                left: 0;
+                background-position: center;
+            }
+
+            & .next {
+                right: 0;
+                background-position: center;
+            }
+        }
     }
 
     &__img-block {
@@ -20,24 +36,14 @@
         position: relative;
         text-align: center;
         height: 100%;
-        vertical-align: top;
-        //padding-right: 15px;
-
-        /*&__description {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 100%;
-            font-size: 45px;
-            font-weight: bold;
-            color: #fff;
-            z-index: 2;
-        }*/
+        vertical-align: middle;
 
         &__description {
             font-size: 20px;
             color: #222;
             display: none;
+            margin-left: 15px;
+
 
             &.current {
                 display: inline-block;
@@ -55,7 +61,12 @@
     }
 
     &__description-block {
-        padding: 15px 25px 0;
+        padding: 15px 0;
+        width: 100%;
+        margin: 0 auto;
+        position: absolute;
+        bottom: 80px;
+        background: rgba(255,255,255, 0.7);
     }
 
     &__img-block:first-child {
@@ -68,7 +79,7 @@
         bottom: 0;
         width: 100%;
         text-align: center;
-        padding: 20px 0;
+        padding: 10px 0 0;
 
         &__ul {
             display: inline-block;
@@ -77,13 +88,32 @@
             vertical-align: middle;
         }
 
+        &__thumbnails-ul {
+            display: inline-block;
+            vertical-align: middle;
+            width: 100%;
+            text-align: left;
+            overflow: hidden;
+        }
+
+        &__inner {
+            position: relative;
+
+            &.go-back {
+                transition:All 0.3s ease;
+                -webkit-transition:All 0.3s ease;
+                -moz-transition:All 0.3s ease;
+                -o-transition:All 0.3s ease;
+            }
+        }
+
         &__item {
             display: inline-block;
-            width: 20px;
-            height: 20px;
+            width: 10px;
+            height: 10px;
             background: grey;
             border: 2px solid white;
-            margin: 0 15px;
+            margin: 0 10px;
             border-radius: 50%;
             cursor: pointer;
 
@@ -100,24 +130,56 @@
                 -ms-transform: rotate(90deg);
             }
         }
+    }
+
+    &__controls-buttons {
+        position: absolute;
+        top: 50%;
+        width: 100%;
 
         & .prev,
         & .next {
+            position: absolute;
             display: inline-block;
-            width: 30px;
-            height: 30px;
+            width: 60px;
+            height: 40px;
             cursor: pointer;
             vertical-align: middle;
+            transition: All 0.3s ease;
+            -webkit-transition: All 0.3s ease;
+            -moz-transition: All 0.3s ease;
+            -o-transition: All 0.3s ease;
+            background-color: rgba(255,255,255, 0.8);
+
+            background-repeat: no-repeat;
+            border-radius: 0 20px 20px 0;
         }
 
         & .prev {
-            background: url('@{blockPaths}/gallery/images/left_white.png') center no-repeat;
-            background-size: 100%;
+            left: -25px;
+            background-image: url('@{blockPaths}/gallery/images/left_black.png');
+            background-size: 30px;
+            border-radius: 0 20px 20px 0;
+            background-position: right;
         }
 
         & .next {
-            background: url('@{blockPaths}/gallery/images/right_white.png') center no-repeat;
-            background-size: 100%;
+            right: -25px;
+            background-image: url('@{blockPaths}/gallery/images/right_black.png');
+            background-size: 30px;
+            border-radius: 20px 0 0 20px;
+            background-position: left;
+        }
+    }
+
+    &__thumbnail {
+        border: 3px solid #fff;
+        margin-right: 15px;
+        opacity: 1;
+
+        &.current {
+            opacity: 1;
+            border: 3px solid #E6292F;
         }
     }
 }
