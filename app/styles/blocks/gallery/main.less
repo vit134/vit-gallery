@@ -4,6 +4,13 @@
     position: relative;
     box-sizing:border-box;
 
+    &__fake {
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+
+    }
+
     &__fullscreen{
         &__wrap {
             display: none;
@@ -15,7 +22,7 @@
             z-index: 9999;
             background: rgba(255,255,255,0.98);
             opacity: 0;
-
+            text-align: center;
             transition:All 0.5s ease;
             -webkit-transition:All 0.5s ease;
             -moz-transition:All 0.5s ease;
@@ -24,6 +31,7 @@
             &.open {
                 display: block;
                 opacity: 1;
+
             }
         }
 
@@ -42,14 +50,60 @@
 
         &__exit {
             position: absolute;
-            top: 50px;
-            right: 50px;
+            top: 20px;
+            right: 20px;
             width: 40px;
             height: 40px;
-            background-image: url('@{blockPaths}/gallery/images/close_black.png');
+            background-image: url('@{blockPaths}/gallery/images/close_black_2x.png');
             background-repeat: no-repeat;
             background-size: 100%;
             cursor: pointer;
+        }
+
+        &__img {
+            max-width: 70%;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        &__controls {
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            margin-top: -30px;
+
+            & .prev,
+            & .next {
+                position: absolute;
+                display: inline-block;
+                width: 60px;
+                height: 60px;
+                cursor: pointer;
+                vertical-align: middle;
+                transition: All 0.3s ease;
+                -webkit-transition: All 0.3s ease;
+                -moz-transition: All 0.3s ease;
+                -o-transition: All 0.3s ease;
+                background-color: rgba(255,255,255, 0.8);
+                background-repeat: no-repeat;
+                border-radius: 0 20px 20px 0;
+            }
+
+            & .prev {
+                left: 0;
+                background-image: url('@{blockPaths}/gallery/images/left_black_2x.png');
+                background-size: 100%;
+                border-radius: 0 20px 20px 0;
+                background-position: right;
+            }
+
+            & .next {
+                right: 0;
+                background-image: url('@{blockPaths}/gallery/images/right_black_2x.png');
+                background-size: 100%;
+                border-radius: 20px 0 0 20px;
+                background-position: left;
+            }
         }
     }
 
@@ -101,19 +155,6 @@
             left: 0;
         }
 
-        &__description {
-            font-size: 20px;
-            color: #222;
-            display: none;
-            margin-left: 15px;
-            font-family: @openSans-CondLightItalic;
-
-
-            &.current {
-                display: inline-block;
-            }
-        }
-
         &__img {
             max-width: 100%;
         }
@@ -129,8 +170,22 @@
         width: 100%;
         margin: 0 auto;
         position: absolute;
-        bottom: 80px;
+        bottom: 0;
         background: rgba(255,255,255, 0.7);
+
+
+        &__description {
+            font-size: 20px;
+            color: #222;
+            display: none;
+            margin-left: 15px;
+            font-family: @openSans-CondLightItalic;
+
+
+            &.current {
+                display: inline-block;
+            }
+        }
     }
 
     &__img-block:first-child {
@@ -144,6 +199,11 @@
         width: 100%;
         text-align: center;
         padding: 10px 0 0;
+
+        &.fullscreen {
+            position: absolute;
+            bottom: 0;
+        }
 
         &__ul {
             display: inline-block;

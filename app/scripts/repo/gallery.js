@@ -76,14 +76,14 @@
             $controlsItem = ( $('.gallery__thumbnail').length ) ? $('.gallery__thumbnail') : $('.gallery__controls__item');
             $galleryInner = $('.gallery__inner');
             $currentBlock = $galleryInner.find('.gallery__img-block.current');
-            $descriptionBlock = $imgBlock.find('.gallery__img-block__description');
+            $descriptionBlock = $imgBlock.find('.gallery__description-block__description');
             currentBlockIndex = $currentBlock.index();
         }
 
         function updateSlideVariables() {
             $currentBlock = $galleryInner.find('.gallery__img-block.current');
             currentBlockIndex = $currentBlock.index();
-            $descriptionBlock = $imgBlock.find('.gallery__img-block__description');
+            $descriptionBlock = $imgBlock.find('.gallery__description-block__description');
             $currentControlItem = $('.' + _controlsClass).find('.current');
 
             if (settings.controls == 'thumbnails') {
@@ -96,7 +96,7 @@
 
         function addClasses () {
             $imgBlock.each(function(){
-                $(this).find('span').addClass('gallery__img-block__description');
+                $(this).find('span').addClass('gallery__description-block__description');
                 $(this).find('img').addClass('gallery__img-block__img')
             })
             updatevariables('addClasses');
@@ -170,20 +170,46 @@
               , fullscreenButton = '<span class="' + _fullscreenButtonClass + '"></span>'
               , fullscreenWrap = '<div class="' + _fullscreenWrapClass + '"></div>'
               , fullscreenClose = '<span class="' + _fullscreenExitClass + '"></span>'
+              , fakeBlock = '<div class="gallery__fake"></div>'
+              , fullScreenControls = '<div class="gallery__fullscreen__controls"><span class="prev"></span><span class="next"></span></div>'
               ;
 
             $galleryBlock.append(fullscreenButton);
 
             $body.append(fullscreenWrap);
 
-            console.log($galleryInner);
-
-
-
             $fullscreenWrap = $body.find('.' + _fullscreenWrapClass).append(fullscreenClose);
+            $fullscreenWrap.append(fakeBlock);
+            $fullscreenWrap.append(fullScreenControls);
 
-            //$fullscreenWrap.clone().append($galleryInner)
-            //$galleryInner.clone().wrapAll('<div class="wrap">').appendTo($fullscreenWrap)
+            $controlsBlock.clone().appendTo($fullscreenWrap);
+
+            var fullscreenThumbnailsBlock = $fullscreenWrap.find('.' + settings.controlsClass).addClass('fullscreen');
+        }
+
+        function openCurrentImage () {
+            var currentImageSrc = $currentBlock.find('img').attr('src');
+
+            $fullscreenWrap.append('<img src="' + currentImageSrc + '" class="gallery__fullscreen__img">');
+        }
+
+        function changeFullscreenImg(where, index) {
+            var $currentImage = $fullscreenWrap.find('.gallery__fullscreen__img');
+
+            switch (where) {
+                case 'next':
+                    var nextImgSrc = $currentBlock.next().find('img').attr('src');
+                    $currentImage.attr('src', nextImgSrc);
+                    break;
+
+                case 'prev':
+                    var prevImgSrc = $currentBlock.prev().find('img').attr('src');
+                    $currentImage.attr('src', prevImgSrc);
+                    break;
+
+                case 'goTo':
+                    break;
+            }
         }
 
         function createControls() {
@@ -222,7 +248,7 @@
                 var $galleryUl = $controlsBlock.append(controlsThumbnailul);
                 $galleryUl.find('.gallery__controls__thumbnails-ul').append(controlInner);
                 $galleryControlsUl = $galleryUl.find('.gallery__controls__thumbnails-ul');
-                $galleryControlsInner =  $galleryUl.find('.gallery__controls__inner')
+                $galleryControlsInner = $('.gallery__controls__inner');
 
 
                 $imgBlock.each(function() {
@@ -267,7 +293,7 @@
         }
 
         function createDescription() {
-            $galleryBlock.after('<div class="' + _galleryDescriptionClass + '"></div>');
+            $galleryBlock.append('<div class="' + _galleryDescriptionClass + '"></div>');
 
             //console.log(currentBlockIndex);
             $descriptionBlock.each(function() {
@@ -280,7 +306,7 @@
         }
 
         function changeDescription(currentIndex, index) {
-            $descriptionBlock = $('.' + _galleryDescriptionClass).find('.gallery__img-block__description');
+            $descriptionBlock = $('.' + _galleryDescriptionClass).find('.gallery__description-block__description');
             $descriptionBlock.eq(currentIndex).removeClass('current');
             $descriptionBlock.eq(index).addClass('current');
         }
@@ -310,6 +336,10 @@
                     $currentBlock.animate({
                         opacity: 1
                     }, 150);
+                }
+
+                if (settings.fullscreen) {
+                    changeFullscreenImg('next')
                 }
 
 
@@ -354,6 +384,10 @@
                     $currentBlock.animate({
                         opacity: 1
                     }, 150);
+                }
+
+                if (settings.fullscreen) {
+                    changeFullscreenImg('prev')
                 }
 
                 $currentBlock.removeClass('current');
@@ -493,15 +527,21 @@
 
                 $fullscreenButton.on('click', function() {
                     $fullscreenWrap.addClass('open');
+                    openCurrentImage();
+
                 })
 
                 $fullscreenExitButton.on('click', function() {
                     $fullscreenWrap.removeClass('open');
+
+                    $fullscreenWrap.find('.gallery__fullscreen__img').remove();
                 })
             }
 
             if (settings.controls == 'thumbnails'){
+                console.log($galleryControlsInner.length);
                 $galleryControlsInner.on('mousedown', function( e ) {
+                    console.log('asd');
                     var clickPosition = e.pageX
                       , startPosition = $galleryControlsInner.css('left')
                       , offsetLeft = $(this).offset().left
@@ -615,9 +655,7 @@
             setImgBlockWidth();
             setInnerWidth();
 
-            if (settings.fullscreen) {
-                createFullscreen();
-            }
+
 
             if (settings.controls == 'points'){
                 createControls();
@@ -625,6 +663,10 @@
                 createThumbnails();
                 getCenterThumbnail();
 
+            }
+
+            if (settings.fullscreen) {
+                createFullscreen();
             }
 
             getCurrentSlide();
