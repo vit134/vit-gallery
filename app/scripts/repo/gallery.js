@@ -26,8 +26,8 @@
             imgPadding: 15,
             autoplay: false,
             autoplayDelay: 3000,
-            fullscreen: true,
-            transition: 'slide' // slide crossfade
+            fullscreen: false,
+            transition: 'crossfade' // slide crossfade
 
         }, options);
 
@@ -539,9 +539,7 @@
             }
 
             if (settings.controls == 'thumbnails'){
-                console.log($galleryControlsInner.length);
                 $galleryControlsInner.on('mousedown', function( e ) {
-                    console.log('asd');
                     var clickPosition = e.pageX
                       , startPosition = $galleryControlsInner.css('left')
                       , offsetLeft = $(this).offset().left
@@ -627,6 +625,18 @@
                             left: -(curentItemOffset - centerItemOffset)
                         }, 300)
 
+                    }
+
+                    if ($controlsItem.eq(index).index() < $centerThumbnail.index() - 1) {
+                        $galleryControlsInner.animate({
+                            left: 0
+                        }, 300)
+                    }
+
+                    if ($controlsItem.eq(index).index() > $controlsItem.length - $centerThumbnail.index() + 1) {
+                        $galleryControlsInner.animate({
+                            left: $galleryControlsInner.parent().outerWidth() - $galleryControlsInner.outerWidth()
+                        }, 300)
                     }
                 }
 
