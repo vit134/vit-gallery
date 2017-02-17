@@ -198,7 +198,6 @@
         bottom: 0;
         width: 100%;
         text-align: center;
-        padding: 10px 0 0;
 
         &.fullscreen {
             position: absolute;
@@ -218,10 +217,15 @@
             width: 100%;
             text-align: left;
             overflow: hidden;
+            padding: 10px 0;
         }
 
         &__inner {
             position: relative;
+
+            /*& span {
+                display:
+            }*/
 
             &.go-back {
                 transition:All 0.3s ease;
@@ -297,13 +301,38 @@
     }
 
     &__thumbnail {
+        display: inline-block;
+        vertical-align: top;
         border: 3px solid #fff;
         margin-right: 15px;
-        opacity: 1;
+        position: relative;
+
+        & img {
+            opacity: 0.5;
+        }
+
+        & i {
+            content: "";
+            display: block;
+            position: absolute;
+            bottom: -7px;
+            left: 0;
+            right: 0;
+            width: 0;
+            height: 3px;
+            background-color: #757575;
+        }
+
 
         &.current {
-            opacity: 1;
-            border: 3px solid #E6292F;
+            & img {
+                opacity: 1;
+            }
+
+            & i {
+                background-color: #757575;
+                width: 100%;
+            }
         }
     }
 }

@@ -2,7 +2,7 @@
 /* eslint eqeqeq: 0 */
 /* eslint no-unused-vars: 0 */
 
-/* v3.2/w last work version*/
+/* v3.3/w last work version*/
 
 
 (function($){
@@ -21,13 +21,15 @@
             thumnailWidth: 90,
             thumnaiHeight: 60,
             thumbnailMargin: 5,
+            thumbnailAnimation: true,
+            thumnailAnimationSpeed: 1000,
             animateSpeed: 1000,
             description: true,
             imgPadding: 15,
             autoplay: false,
             autoplayDelay: 3000,
             fullscreen: false,
-            transition: 'crossfade' // slide crossfade
+            transition: 'slide' // slide crossfade
 
         }, options);
 
@@ -95,6 +97,7 @@
         }
 
         function addClasses () {
+            console.log(settings.thumnailAnimationSpeed);
             $imgBlock.each(function(){
                 $(this).find('span').addClass('gallery__description-block__description');
                 $(this).find('img').addClass('gallery__img-block__img')
@@ -258,19 +261,27 @@
                     newItem = document.createElement('img');
                     newItem.src = thumnailImgUrl;
 
-                    $(newItem).width(settings.thumnailWidth)
+                    /*$(newItem).width(settings.thumnailWidth)
                               .height(settings.thumnaiHeight)
                               .addClass(_thumbnailImgClass)
                               .css('margin-right', settings.thumbnailMargin)
-                              .attr('data-index', $(this).index());
+                              .attr('data-index', $(this).index());*/
+                    $(newItem).css('width', '100%')
 
 
                     $galleryControlsInner.append($(newItem));
                 })
 
+                $galleryControlsInner.find('img').wrap('<span class="'+_thumbnailImgClass+'"></span>');
+
+                $('.' + _thumbnailImgClass).width(settings.thumnailWidth)
+                                           .height(settings.thumnaiHeight)
+                                           .css('margin-right', settings.thumbnailMargin)
+                                           .attr('data-index', $(this).index());
+                $('.' + _thumbnailImgClass).append('<i></i>')
 
                 $galleryControlsInner.css({
-                    width: ( $(newItem).outerWidth() + settings.thumbnailMargin ) * $('.' + _thumbnailImgClass).length,
+                    width: ( $('.' + _thumbnailImgClass).outerWidth() + settings.thumbnailMargin ) * $('.' + _thumbnailImgClass).length,
                     left: 0
                 });
 
@@ -346,8 +357,27 @@
                 $currentBlock.removeClass('current');
                 $currentBlock.next().addClass('current');
                 $controlsItem.eq(currentBlockIndex).removeClass('current');
+
+
+                if (settings.thumbnailAnimation) {
+                    $controlsItem.eq(currentBlockIndex)
+                        .find('i').css({left: 'auto', width: '100%'})
+                        .animate({width: 0}, settings.thumbnailAnimationSpeed, function() {
+                            $(this).css({left: '', width: ''});
+                        });
+                }
+
                 currentBlockIndex++;
+
                 $controlsItem.eq(currentBlockIndex).addClass('current');
+                if (settings.thumbnailAnimation) {
+                    $controlsItem.eq(currentBlockIndex)
+                        .find('i').css({right: 'auto', width: '0'})
+                        .animate({width: '100%'}, settings.thumbnailAnimationSpeed, function() {
+                            $(this).css({right: '', width: ''});
+                        });
+                }
+
                 if (settings.autoplay ) {
                     clearInterval(sliderTimer);
                     autoplay();
@@ -394,10 +424,24 @@
                 $currentBlock.prev().addClass('current');
 
                 $controlsItem.eq(currentBlockIndex).removeClass('current');
+                if (settings.thumbnailAnimation) {
+                    $controlsItem.eq(currentBlockIndex)
+                        .find('i').css({right: 'auto', width: '100%'})
+                        .animate({width: '0'}, settings.thumbnailAnimationSpeed, function() {
+                            $(this).css({right: '', width: ''});
+                        });
+                }
 
                 currentBlockIndex--;
 
                 $controlsItem.eq(currentBlockIndex).addClass('current');
+                if (settings.thumbnailAnimation) {
+                    $controlsItem.eq(currentBlockIndex)
+                        .find('i').css({left: 'auto', width: '0'})
+                        .animate({width: '100%'}, settings.thumbnailAnimationSpeed, function() {
+                            $(this).css({left: '', width: ''});
+                        });
+                }
 
                 if (settings.autoplay ) {
                     clearInterval(sliderTimer);
@@ -468,7 +512,13 @@
             $galleryInner.find('.current').removeClass('current');
             $imgBlock.eq(thisIndex).addClass('current');
 
+            if (settings.thumbnailAnimation) {
+                $controlsBlock.find('.current').find('i').css({width: '', left: '', right: ''})
+            }
+
             $controlsBlock.find('.current').removeClass('current');
+
+
             $controlsItem.eq(thisIndex).addClass('current');
 
 
