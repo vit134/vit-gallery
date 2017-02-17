@@ -73,10 +73,10 @@
             //console.log(functionName);
             $controlsBlock = $this.find('.' + settings.controlsClass);
             $galleryBlock = $this.find('.gallery__block');
-            $prevButton = $('.prev');
-            $nextButton = $('.next');
-            $controlsItem = ( $('.gallery__thumbnail').length ) ? $('.gallery__thumbnail') : $('.gallery__controls__item');
-            $galleryInner = $('.gallery__inner');
+            $prevButton = $this.find('.prev');
+            $nextButton = $this.find('.next');
+            $controlsItem = ( $this.find('.gallery__thumbnail').length ) ? $this.find('.gallery__thumbnail') : $this.find('.gallery__controls__item');
+            $galleryInner = $this.find('.gallery__inner');
             $currentBlock = $galleryInner.find('.gallery__img-block.current');
             $descriptionBlock = $imgBlock.find('.gallery__description-block__description');
             currentBlockIndex = $currentBlock.index();
@@ -91,9 +91,6 @@
             if (settings.controls == 'thumbnails') {
                 controlsInnerPosition = parseInt($galleryControlsInner.css('left'));
             }
-
-            //console.log(currentBlockIndex);
-            //console.log(galleryInnerPosition)
         }
 
         function addClasses () {
@@ -101,12 +98,12 @@
                 $(this).find('span').addClass('gallery__description-block__description');
                 $(this).find('img').addClass('gallery__img-block__img')
             })
-            updatevariables('addClasses');
+            updatevariables();
         }
 
         function addWrapper() {
             $imgBlock.wrapAll('<div class="gallery__block"><div class="' + _galleryInnerClass + '"></div></div>');
-            updatevariables('addWrapper');
+            updatevariables();
         }
 
         function getFullWidth() {
@@ -118,15 +115,15 @@
                 imgBlockWidth = imgBlockWidth + $(this).outerWidth();
             })
 
-            updatevariables('getFullWidth');
+            updatevariables();
             return imgBlockWidth;
         }
 
         function setInnerWidth() {
-            var inner = $('.' + _galleryInnerClass);
+            var inner = $this.find('.' + _galleryInnerClass);
             inner.css('width', getFullWidth());
 
-            updatevariables('setInnerWidth');
+            updatevariables();
         }
 
         function setImgBlockWidth() {
@@ -259,15 +256,7 @@
 
                     newItem = document.createElement('img');
                     newItem.src = thumnailImgUrl;
-
-                    /*$(newItem).width(settings.thumnailWidth)
-                              .height(settings.thumnaiHeight)
-                              .addClass(_thumbnailImgClass)
-                              .css('margin-right', settings.thumbnailMargin)
-                              .attr('data-index', $(this).index());*/
                     $(newItem).css('width', '100%')
-
-
                     $galleryControlsInner.append($(newItem));
                 })
 
@@ -276,17 +265,17 @@
                 $('.' + _thumbnailImgClass).width(settings.thumnailWidth)
                                            .height(settings.thumnaiHeight)
                                            .css('margin-right', settings.thumbnailMargin)
-                                           .attr('data-index', $(this).index());
+                                           .attr('data-index', $(this).index())
+                                           .last().css('margin-right', 0)
+                                           ;
                 $('.' + _thumbnailImgClass).append('<i></i>')
 
                 $galleryControlsInner.css({
-                    width: ( $('.' + _thumbnailImgClass).outerWidth() + settings.thumbnailMargin ) * $('.' + _thumbnailImgClass).length,
+                    width: ( $('.' + _thumbnailImgClass).outerWidth() + settings.thumbnailMargin ) * $('.' + _thumbnailImgClass).length - settings.thumbnailMargin,
                     left: 0
                 });
 
                 updatevariables('createThumbnails');
-                //getCurrentSlide();
-
             }
         }
 
@@ -316,7 +305,7 @@
         }
 
         function changeDescription(currentIndex, index) {
-            $descriptionBlock = $('.' + _galleryDescriptionClass).find('.gallery__description-block__description');
+            $descriptionBlock = $this.find('.gallery__description-block__description');
             $descriptionBlock.eq(currentIndex).removeClass('current');
             $descriptionBlock.eq(index).addClass('current');
         }
@@ -398,7 +387,7 @@
                     autoplay();
                 }
 
-                changeDescription(currentBlockIndex - 1, currentBlockIndex);
+                changeDescription(currentBlockIndex , currentBlockIndex + 1);
                 updateSlideVariables();
                 getCurrentSlide();
 
@@ -446,7 +435,7 @@
                     autoplay();
                 }
 
-                changeDescription(currentBlockIndex + 1, currentBlockIndex);
+                changeDescription(currentBlockIndex, currentBlockIndex - 1);
                 updateSlideVariables();
                 getCurrentSlide();
 
@@ -556,8 +545,10 @@
         function bindEvents() {
             galleryInnerPosition = parseInt($galleryInner.css('left'));
             currentBlockIndex = $currentBlock.index();
+            var clickCount = 0;
 
             $prevButton.on('click', function(){
+                clickCount++;
                 $currentBlock = $galleryInner.find('.gallery__img-block.current');
                 prevSlide();
             })
@@ -622,7 +613,7 @@
 
                         e.preventDefault();
                     }).on('mouseup', function(e) {
-                        //$(e.target).unbind('mouseup');
+
                         e.preventDefault();
 
                         if ($galleryControlsInner.offset().left >= $galleryControlsInner.parent().offset().left) {
@@ -713,11 +704,11 @@
             addClasses();
             addWrapper();
             createControlsButton();
-            showImg();
+
             setGalleryHeight();
             setImgBlockWidth();
             setInnerWidth();
-
+            showImg();
 
 
             if (settings.controls == 'points'){
@@ -773,47 +764,3 @@
         });
     };
 })(jQuery);
-
-/*(function($) {
-    $.fn.drags = function(opt) {
-
-        opt = $.extend({
-            handle: '',
-            cursor: 'default'
-        }, opt);
-
-        if (opt.handle === "") {
-            var $el = this;
-        } else {
-            var $el = this.find(opt.handle);
-        }
-
-        return $el.css('cursor', opt.cursor).on("mousedown", function(e) {
-            if (opt.handle === "") {
-                var $drag = $(this).addClass('draggable');
-            } else {
-                var $drag = $(this).addClass('active-handle').parent().addClass('draggable');
-            }
-            var z_idx = $drag.css('z-index'),
-                drg_h = $drag.outerHeight(),
-                drg_w = $drag.outerWidth(),
-                pos_y = $drag.offset().top + drg_h - e.pageY,
-                pos_x = $drag.offset().left + drg_w - e.pageX;
-            $drag.css('z-index', 1000).parents().on("mousemove", function(e) {
-                $('.draggable').offset({
-                    left:e.pageX + pos_x - drg_w
-                }).on("mouseup", function() {
-                    $(this).removeClass('draggable').css('z-index', z_idx);
-                });
-            });
-            e.preventDefault(); // disable selection
-        }).on("mouseup", function() {
-            if (opt.handle === "") {
-                $(this).removeClass('draggable');
-            } else {
-                $(this).removeClass('active-handle').parent().removeClass('draggable');
-            }
-        });
-
-    }
-})(jQuery);*/
