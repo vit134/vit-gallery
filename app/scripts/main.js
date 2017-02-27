@@ -4,10 +4,13 @@ $(document).ready(function(){
 
 
     $gallery.vitGallery({
-        debag: true
+        debag: true,
+        thumbnailMargin: 5
     })
 
     $gallery1.vitGallery({
-        controls: 'points'
+        controls: 'points',
+        transition: 'crossfade',
+        autoplay: false
     })
 })

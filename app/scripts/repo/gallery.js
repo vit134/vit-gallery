@@ -663,25 +663,28 @@
                       , centerItemOffset = $centerThumbnail.offset().left + (($controlsItem.outerWidth() + settings.thumbnailMargin) / 2)
                       ;
 
-                    if ($controlsItem.eq(index).index() > $centerThumbnail.index() - 1 && $controlsItem.eq(index).index() < $controlsItem.length - $centerThumbnail.index() + 1) {
-
+                    console.log($controlsItem.eq(index).index());
+                    console.log($controlsItem.length - $centerThumbnail.index());
+                    console.log($controlsItem.eq(index).index() > $centerThumbnail.index() - 1);
+                    console.log($controlsItem.eq(index).index() <= $controlsItem.length - $centerThumbnail.index() - 1 );
+                    if ($controlsItem.eq(index).index() > $centerThumbnail.index() - 1 && $controlsItem.eq(index).index() <= $controlsItem.length - $centerThumbnail.index() - 2) {
                         $galleryControlsInner.animate({
                             left: -(curentItemOffset - centerItemOffset)
                         }, 300)
 
                     }
 
-                    if ($controlsItem.eq(index).index() < $centerThumbnail.index() - 1) {
+                    /*if ($controlsItem.eq(index).index() < $centerThumbnail.index() - 1) {
                         $galleryControlsInner.animate({
                             left: 0
                         }, 300)
-                    }
+                    }*/
 
-                    if ($controlsItem.eq(index).index() > $controlsItem.length - $centerThumbnail.index() + 1) {
+                    /*if ($controlsItem.eq(index).index() >= $controlsItem.length - $centerThumbnail.index() + 1) {
                         $galleryControlsInner.animate({
                             left: $galleryControlsInner.parent().outerWidth() - $galleryControlsInner.outerWidth()
                         }, 300)
-                    }
+                    }*/
                 }
 
                 $controlsItem.eq(index).addClass('current');
