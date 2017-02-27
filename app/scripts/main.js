@@ -5,12 +5,14 @@ $(document).ready(function(){
 
     $gallery.vitGallery({
         debag: true,
-        thumbnailMargin: 5
+        thumbnailMargin: 5,
+        fullscreen: true
     })
 
     $gallery1.vitGallery({
         controls: 'points',
         transition: 'crossfade',
-        autoplay: false
+        autoplay: false,
+        fullscreen: true
     })
 })

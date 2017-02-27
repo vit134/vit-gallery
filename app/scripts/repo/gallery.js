@@ -167,7 +167,7 @@
         function createFullscreen() {
             var $body = $('body')
               , fullscreenButton = '<span class="' + _fullscreenButtonClass + '"></span>'
-              , fullscreenWrap = '<div class="' + _fullscreenWrapClass + '"></div>'
+              , fullscreenWrap = '<div class="' + _fullscreenWrapClass + ' ' + 'fullscreen_' + $this.attr('class') + '"></div>'
               , fullscreenClose = '<span class="' + _fullscreenExitClass + '"></span>'
               , fakeBlock = '<div class="gallery__fake"></div>'
               , fullScreenControls = '<div class="gallery__fullscreen__controls"><span class="prev"></span><span class="next"></span></div>'
@@ -177,7 +177,7 @@
 
             $body.append(fullscreenWrap);
 
-            $fullscreenWrap = $body.find('.' + _fullscreenWrapClass).append(fullscreenClose);
+            $fullscreenWrap = $body.find('.fullscreen_' + $this.attr('class')).append(fullscreenClose);
             $fullscreenWrap.append(fakeBlock);
             $fullscreenWrap.append(fullScreenControls);
 
@@ -565,8 +565,8 @@
             })
 
             if (settings.fullscreen) {
-                var $fullscreenButton = $('.' + _fullscreenButtonClass)
-                  , $fullscreenExitButton = $('.' + _fullscreenExitClass)
+                var $fullscreenButton = $this.find('.' + _fullscreenButtonClass)
+                  , $fullscreenExitButton = $('.fullscreen_' + $this.attr('class')).find('.' + _fullscreenExitClass)
                   ;
 
                 $fullscreenButton.on('click', function() {
@@ -663,10 +663,6 @@
                       , centerItemOffset = $centerThumbnail.offset().left + (($controlsItem.outerWidth() + settings.thumbnailMargin) / 2)
                       ;
 
-                    console.log($controlsItem.eq(index).index());
-                    console.log($controlsItem.length - $centerThumbnail.index());
-                    console.log($controlsItem.eq(index).index() > $centerThumbnail.index() - 1);
-                    console.log($controlsItem.eq(index).index() <= $controlsItem.length - $centerThumbnail.index() - 1 );
                     if ($controlsItem.eq(index).index() > $centerThumbnail.index() - 1 && $controlsItem.eq(index).index() <= $controlsItem.length - $centerThumbnail.index() - 2) {
                         $galleryControlsInner.animate({
                             left: -(curentItemOffset - centerItemOffset)
