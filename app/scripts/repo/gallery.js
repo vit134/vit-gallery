@@ -2,7 +2,7 @@
 /* eslint eqeqeq: 0 */
 /* eslint no-unused-vars: 0 */
 
-/* v3.3/w last work version*/
+/* v4.0/w create fullscreen*/
 
 
 (function($){
