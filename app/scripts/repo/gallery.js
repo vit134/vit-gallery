@@ -2,7 +2,7 @@
 /* eslint eqeqeq: 0 */
 /* eslint no-unused-vars: 0 */
 
-/* v3.3/w last work version*/
+/* v4.0/w create fullscreen*/
 
 
 (function($){
@@ -75,7 +75,7 @@
             $galleryBlock = $this.find('.gallery__block');
             $prevButton = $this.find('.prev');
             $nextButton = $this.find('.next');
-            $controlsItem = ( $this.find('.gallery__thumbnail').length ) ? $this.find('.gallery__thumbnail') : $this.find('.gallery__controls__item');
+            $controlsItem = ( $this.find('.gallery__thumbnail').length > 0 ) ? $this.find('.gallery__thumbnail') : $this.find('.gallery__controls__item');
             $galleryInner = $this.find('.gallery__inner');
             $currentBlock = $galleryInner.find('.gallery__img-block.current');
             $descriptionBlock = $imgBlock.find('.gallery__description-block__description');
@@ -167,7 +167,7 @@
         function createFullscreen() {
             var $body = $('body')
               , fullscreenButton = '<span class="' + _fullscreenButtonClass + '"></span>'
-              , fullscreenWrap = '<div class="' + _fullscreenWrapClass + '"></div>'
+              , fullscreenWrap = '<div class="' + _fullscreenWrapClass + ' ' + 'fullscreen_' + $this.attr('class') + '"></div>'
               , fullscreenClose = '<span class="' + _fullscreenExitClass + '"></span>'
               , fakeBlock = '<div class="gallery__fake"></div>'
               , fullScreenControls = '<div class="gallery__fullscreen__controls"><span class="prev"></span><span class="next"></span></div>'
@@ -175,13 +175,13 @@
 
             $galleryBlock.append(fullscreenButton);
 
-            $body.append(fullscreenWrap);
+            $this.append(fullscreenWrap);
 
-            $fullscreenWrap = $body.find('.' + _fullscreenWrapClass).append(fullscreenClose);
+            $fullscreenWrap = $body.find('.fullscreen_' + $this.attr('class')).append(fullscreenClose);
             $fullscreenWrap.append(fakeBlock);
             $fullscreenWrap.append(fullScreenControls);
 
-            $controlsBlock.clone().appendTo($fullscreenWrap);
+            //$controlsBlock.clone().appendTo($fullscreenWrap);
 
             var fullscreenThumbnailsBlock = $fullscreenWrap.find('.' + settings.controlsClass).addClass('fullscreen');
         }
@@ -207,6 +207,8 @@
                     break;
 
                 case 'goTo':
+                    var goToImgSrc = $('.gallery__img-block').eq(index).find('img').attr('src');
+                    $currentImage.attr('src', goToImgSrc);
                     break;
             }
         }
@@ -394,6 +396,8 @@
                 if (callback) {
                     callback();
                 }
+
+                checkLastSlide(currentBlockIndex);
             }
             return currentBlockIndex;
         }
@@ -447,6 +451,8 @@
                 if (callback) {
                     callback();
                 }
+
+                checkLastSlide(currentBlockIndex);
             }
         }
 
@@ -504,6 +510,27 @@
                 clearInterval(sliderTimer);
                 autoplay();
             }
+
+            if (settings.fullscreen) {
+                changeFullscreenImg('goTo', $galleryInner.find('.current').index());
+            }
+
+            checkLastSlide(currentBlockIndex);
+        }
+
+        function checkLastSlide(index) {
+            var itemLength = $controlsItem.length;
+
+            if (index == $controlsItem.length - 1) {
+                $this.find('.next').addClass('hide');
+            } else {
+                $this.find('.next').removeClass('hide');
+            }
+            if (index == 0) {
+                $this.find('.prev').addClass('hide');
+            } else {
+                $this.find('.prev').removeClass('hide');
+            }
         }
 
         function scrollControls(direction) {
@@ -548,14 +575,18 @@
             var clickCount = 0;
 
             $prevButton.on('click', function(){
-                clickCount++;
-                $currentBlock = $galleryInner.find('.gallery__img-block.current');
-                prevSlide();
+                if (!$(this).hasClass('hide')){
+                    clickCount++;
+                    $currentBlock = $galleryInner.find('.gallery__img-block.current');
+                    prevSlide();
+                }
             })
 
             $nextButton.on('click', function(){
-                $currentBlock = $galleryInner.find('.gallery__img-block.current');
-                nextSlide();
+                if (!$(this).hasClass('hide')){
+                    $currentBlock = $galleryInner.find('.gallery__img-block.current');
+                    nextSlide();
+                }
             })
 
 
@@ -565,18 +596,29 @@
             })
 
             if (settings.fullscreen) {
-                var $fullscreenButton = $('.' + _fullscreenButtonClass)
-                  , $fullscreenExitButton = $('.' + _fullscreenExitClass)
+                var $fullscreenButton = $this.find('.' + _fullscreenButtonClass)
+                  , $fullscreenExitButton = $('.fullscreen_' + $this.attr('class')).find('.' + _fullscreenExitClass)
                   ;
 
                 $fullscreenButton.on('click', function() {
                     $fullscreenWrap.addClass('open');
+                    $controlsBlock.appendTo($fullscreenWrap);
+                    if (settings.controls == 'thumbnails') {
+                        $('.gallery__thumbnail.center').removeClass('center');
+                        getCenterThumbnail();
+                    }
                     openCurrentImage();
 
                 })
 
                 $fullscreenExitButton.on('click', function() {
                     $fullscreenWrap.removeClass('open');
+                    $controlsBlock.appendTo($this);
+                    if (settings.controls == 'thumbnails') {
+                        $('.gallery__thumbnail.center').removeClass('center');
+                        getCenterThumbnail();
+                    }
+                    getCurrentSlide();
 
                     $fullscreenWrap.find('.gallery__fullscreen__img').remove();
                 })
@@ -655,36 +697,21 @@
         function getCurrentSlide() {
             var index = 0;
 
-            if ($galleryInner.find('.current').length > 0) {
-                index = $galleryInner.find('.current').index();
+            if ($this.find('.current').length > 0) {
+                index = $this.find('.current').index();
+
 
                 if (settings.controls == 'thumbnails'){
                     var curentItemOffset = $controlsItem.eq(index).offset().left + (($controlsItem.outerWidth() + settings.thumbnailMargin) / 2)
                       , centerItemOffset = $centerThumbnail.offset().left + (($controlsItem.outerWidth() + settings.thumbnailMargin) / 2)
                       ;
 
-                    console.log($controlsItem.eq(index).index());
-                    console.log($controlsItem.length - $centerThumbnail.index());
-                    console.log($controlsItem.eq(index).index() > $centerThumbnail.index() - 1);
-                    console.log($controlsItem.eq(index).index() <= $controlsItem.length - $centerThumbnail.index() - 1 );
                     if ($controlsItem.eq(index).index() > $centerThumbnail.index() - 1 && $controlsItem.eq(index).index() <= $controlsItem.length - $centerThumbnail.index() - 2) {
                         $galleryControlsInner.animate({
                             left: -(curentItemOffset - centerItemOffset)
                         }, 300)
 
                     }
-
-                    /*if ($controlsItem.eq(index).index() < $centerThumbnail.index() - 1) {
-                        $galleryControlsInner.animate({
-                            left: 0
-                        }, 300)
-                    }*/
-
-                    /*if ($controlsItem.eq(index).index() >= $controlsItem.length - $centerThumbnail.index() + 1) {
-                        $galleryControlsInner.animate({
-                            left: $galleryControlsInner.parent().outerWidth() - $galleryControlsInner.outerWidth()
-                        }, 300)
-                    }*/
                 }
 
                 $controlsItem.eq(index).addClass('current');
