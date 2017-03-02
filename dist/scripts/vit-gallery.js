@@ -13,7 +13,6 @@
         //Default settings
         var settings = $.extend({
             debag: false,
-            buttons: true,
             galleryHeight: 'auto',
             imgBlockClass: 'gallery__img-block',
             controls: 'thumbnails', // points thumbnails
