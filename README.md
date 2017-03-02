@@ -62,3 +62,18 @@ description | bool | true | if "true" show the description for slides
 autoplay | bool | false | if "true" autoplay slider
 autoplayDelay | number | 3000 | delay from change slide, if setting "autoplay" is "true"
 fullscreen | bool | false | if "true" activate fullscreen mode
+
+## Use settings
+```
+<script>  
+    $(document).ready(function(){
+        var $gallery = $('.gallery');
+        $gallery.vitGallery({
+            controls: 'points', 
+            transition: 'crossfade',
+            fullscreen: true
+        })
+    })  
+</script>
+```
+
