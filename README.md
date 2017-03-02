@@ -53,3 +53,12 @@ imgBlockClass | string | gallery__img-block | css Class for image block containe
 controls | string | points | can be 'points', 'thumbnails'
 thumnailWidth | number | 90 | width of thumnails
 thumnaiHeight | number | 60 | height of thumnails
+thumbnailMargin | number | 5 | margin-right of thumnails
+thumbnailAnimation | bool | true | thumbnails animation on change slide
+thumnailAnimationSpeed | number | 1000 | speed of thumbnails animation, if setting "thumbnailAnimation" is "true" 
+transition | string | slide | can be 'slide', 'crossfade'
+animateSpeed | number | 1000 | speed of slide chenge, if settings "transition" is "slide" 
+description | bool | true | if "true" show the description for slides
+autoplay | bool | false | if "true" autoplay slider
+autoplayDelay | number | 3000 | delay from change slide, if setting "autoplay" is "true"
+fullscreen | bool | false | if "true" activate fullscreen mode
