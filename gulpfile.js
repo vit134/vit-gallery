@@ -37,29 +37,31 @@ gulp.task('styles', function () {
         gulp.paths.styles.src + '/blocks/**/main.less',
         gulp.paths.styles.src + '/blocks/**/**/main.less'
     ])
-    .pipe(concat('__main.less'))
+    .pipe(concat('vit-gallery.less'))
     .pipe(less())
     .on('error', console.log)
     .pipe(gulp.dest(gulp.paths.styles.dst))
     .pipe(cleanCSS())
-    .pipe(rename('_main.css'))
+    .pipe(rename('vit-gallery.min.css'))
     .pipe(gulp.dest(gulp.paths.styles.dst));
 });
 
 gulp.task('scripts', function () {
     gulp.src([
         gulp.paths.scripts.src + '/repo/**/*.js',
-        gulp.paths.scripts.src + '/*.js'
 
     ])
+    .pipe(concat('vit-gallery.js'))
+    .pipe(gulp.dest(gulp.paths.scripts.dst))
     .pipe(uglify().on('error', function(e){
         console.log(e);
     }))
+    .pipe(rename('vit-gallery.min.js'))
     .pipe(gulp.dest(gulp.paths.scripts.dst))
 });
 
 gulp.task('images', function () {
-    gulp.src(gulp.paths.images.src)
+    gulp.src(gulp.paths.images.src + '/*')
     .pipe(imagemin({ //Сожмем их
         progressive: true,
         svgoPlugins: [{removeViewBox: false}],
@@ -81,8 +83,7 @@ gulp.task('lint', function() {
         }
     }))
     .pipe(eslint.format())
-    // Brick on failure to be super strict
     .pipe(eslint.failOnError());
 });
 
-gulp.task('build', ['styles', 'scripts', 'lint']);
+gulp.task('build', ['styles', 'scripts', 'lint', 'images']);

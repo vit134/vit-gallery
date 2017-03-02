@@ -22,11 +22,14 @@
 body,
 html {
   margin: 0;
+  text-align: center;
 }
 .wrapper {
-  min-width: 600px;
-  max-width: 1080px;
-  margin: 0 auto;
+  display: inline-block;
+  vertical-align: top;
+  width: 600px;
+  margin: 0 50px;
+  margin-top: 150px;
 }
 .gallery {
   width: 100%;
@@ -54,6 +57,9 @@ html {
   -webkit-transition: All 0.5s ease;
   -moz-transition: All 0.5s ease;
   -o-transition: All 0.5s ease;
+}
+.gallery__fullscreen__wrap .gallery__controls {
+  position: absolute !important;
 }
 .gallery__fullscreen__wrap.open {
   display: block;
@@ -128,6 +134,7 @@ html {
   position: relative;
   left: 0;
   height: 100%;
+  text-align: left;
 }
 .gallery__block {
   position: relative;
@@ -165,7 +172,6 @@ html {
   max-width: 100%;
 }
 .gallery__img-block.load {
-  background: url('../../app/styles/blocks/gallery/images/sunny.gif') center no-repeat;
   background-size: 40px;
 }
 .gallery__description-block {
@@ -175,6 +181,7 @@ html {
   position: absolute;
   bottom: 0;
   background: rgba(255, 255, 255, 0.7);
+  text-align: left;
 }
 .gallery__description-block__description {
   font-size: 20px;
@@ -194,7 +201,6 @@ html {
   bottom: 0;
   width: 100%;
   text-align: center;
-  padding: 10px 0 0;
 }
 .gallery__controls.fullscreen {
   position: absolute;
@@ -212,9 +218,13 @@ html {
   width: 100%;
   text-align: left;
   overflow: hidden;
+  padding: 10px 0;
 }
 .gallery__controls__inner {
   position: relative;
+  /*& span {
+                display:
+            }*/
 }
 .gallery__controls__inner.go-back {
   transition: All 0.3s ease;
@@ -248,6 +258,9 @@ html {
   top: 50%;
   width: 100%;
 }
+.gallery__controls-buttons .hide {
+  opacity: 0.3;
+}
 .gallery__controls-buttons .prev,
 .gallery__controls-buttons .next {
   position: absolute;
@@ -279,11 +292,29 @@ html {
   background-position: left;
 }
 .gallery__thumbnail {
+  display: inline-block;
+  vertical-align: top;
   border: 3px solid #fff;
-  margin-right: 15px;
+  position: relative;
+}
+.gallery__thumbnail img {
+  opacity: 0.5;
+}
+.gallery__thumbnail i {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: -7px;
+  left: 0;
+  right: 0;
+  width: 0;
+  height: 3px;
+  background-color: #757575;
+}
+.gallery__thumbnail.current img {
   opacity: 1;
 }
-.gallery__thumbnail.current {
-  opacity: 1;
-  border: 3px solid #E6292F;
+.gallery__thumbnail.current i {
+  background-color: #757575;
+  width: 100%;
 }
