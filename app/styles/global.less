@@ -4,6 +4,18 @@ html {
     text-align: center;
 }
 
+body {
+    &.slide-blur {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        overflow: hidden;
+        background-color: #FF3CAC;
+        background-image: linear-gradient(225deg, #FF3CAC 0%, #784BA0 50%, #2B86C5 100%);
+    }
+}
+
 .wrapper {
     display: inline-block;
     vertical-align: top;

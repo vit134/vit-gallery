@@ -24,6 +24,15 @@ html {
   margin: 0;
   text-align: center;
 }
+body.slide-blur {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #FF3CAC;
+  background-image: linear-gradient(225deg, #FF3CAC 0%, #784BA0 50%, #2B86C5 100%);
+}
 .wrapper {
   display: inline-block;
   vertical-align: top;
@@ -136,9 +145,16 @@ html {
   height: 100%;
   text-align: left;
 }
+.gallery__inner.slide-blur {
+  will-change: transform;
+}
 .gallery__block {
   position: relative;
   overflow: hidden;
+}
+.gallery__block.slide-blur {
+  overflow: visible;
+  will-change: transform;
 }
 .gallery__block:hover .gallery__controls-buttons .prev {
   left: 0;
@@ -317,4 +333,50 @@ html {
 .gallery__thumbnail.current i {
   background-color: #757575;
   width: 100%;
+}
+.gallery .slick-track {
+  will-change: transform;
+}
+.gallery .slick-list {
+  overflow: visible;
+  will-change: transform;
+}
+.gallery .slick-slide {
+  padding: 0 100px;
+  width: 100vw;
+  filter: drop-shadow(0px 10px 40px rgba(0, 0, 0, 0.55));
+}
+.gallery .slick-slide img {
+  max-width: 100%;
+  margin: 0 auto;
+}
+@keyframes motion-blur {
+  0% {
+    filter: url(#blur0);
+    transform: scale(1, 1);
+  }
+  15% {
+    filter: url(#blur1);
+    transform: scale(1, 0.98);
+  }
+  30% {
+    filter: url(#blur2);
+    transform: scale(1, 0.93);
+  }
+  45% {
+    filter: url(#blur3);
+    transform: scale(1.1, 0.9);
+  }
+  60% {
+    filter: url(#blur4);
+    transform: scale(1.2, 0.88);
+  }
+  75%,
+  100% {
+    filter: url(#blur5);
+    transform: scale(1.35, 0.85);
+  }
+}
+.do-transition {
+  animation: motion-blur 0.1s linear forwards, motion-blur 0.4s linear reverse forwards 0.1s;
 }

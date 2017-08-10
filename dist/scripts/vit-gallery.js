@@ -1,4 +1,5 @@
 
+
 /* eslint eqeqeq: 0 */
 /* eslint no-unused-vars: 0 */
 
@@ -28,7 +29,7 @@
             autoplay: false,
             autoplayDelay: 3000,
             fullscreen: false,
-            transition: 'slide' // slide crossfade
+            transition: 'slide' // slide crossfade slide-blur
 
         }, options);
 
@@ -368,6 +369,21 @@
                     $currentBlock.animate({
                         opacity: 1
                     }, 150);
+                } else if (settings.transition == 'slide-blur') {
+
+                    $galleryInner.animate({
+                        left: galleryInnerPosition - $imgBlock.width()
+                    }, settings.animateSpeed, function() {
+                        $imgBlock.removeClass('do-transition');
+                    });
+
+                    galleryInnerPosition = galleryInnerPosition - $imgBlock.width();
+
+                    $currentBlock.addClass('do-transition').next().addClass('do-transition');
+
+                    $currentBlock.animate({
+                        opacity: 1
+                    }, 150);
                 }
 
                 if (settings.fullscreen) {
@@ -413,6 +429,21 @@
                     $currentBlock.animate({
                         opacity: 0
                     }, 150);
+
+                    $currentBlock.animate({
+                        opacity: 1
+                    }, 150);
+                } else if (settings.transition == 'slide-blur') {
+
+                    $galleryInner.animate({
+                        left: galleryInnerPosition + $imgBlock.width()
+                    }, settings.animateSpeed, function() {
+                        $imgBlock.removeClass('do-transition');
+                    });
+
+                    galleryInnerPosition = galleryInnerPosition + $imgBlock.width();
+
+                    $currentBlock.addClass('do-transition').prev().addClass('do-transition');
 
                     $currentBlock.animate({
                         opacity: 1
@@ -479,6 +510,29 @@
                 $galleryInner.find('.current').animate({
                     opacity: 1
                 }, 150);
+            } else if (settings.transition == 'slide-blur'){
+                if (currentBlockIndex < thisIndex) {
+                    $galleryInner.animate({
+                        left: galleryInnerPosition - ( $imgBlock.width() * ( thisIndex -  currentBlockIndex))
+                    }, settings.animateSpeed, function() {
+                        $imgBlock.removeClass('do-transition');
+                    });
+
+                    $imgBlock.addClass('do-transition');
+
+                    galleryInnerPosition = galleryInnerPosition - ( $imgBlock.width() * ( thisIndex -  currentBlockIndex))
+
+                } else {
+                    $galleryInner.animate({
+                        left: - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
+                    }, settings.animateSpeed, function() {
+                        $imgBlock.removeClass('do-transition');
+                    });
+
+                    $imgBlock.addClass('do-transition');
+
+                    galleryInnerPosition = - ( $imgBlock.width() * ( thisIndex +  currentBlockIndex) +  galleryInnerPosition)
+                }
             }
 
             changeDescription($galleryInner.find('.current').index(), thisIndex);
@@ -745,7 +799,6 @@
             } else if (settings.controls == 'thumbnails') {
                 createThumbnails();
                 getCenterThumbnail();
-
             }
 
             if (settings.fullscreen) {
